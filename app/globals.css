@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;0,900;1,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;0,900;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,42 +6,44 @@
 
 /* ── Design tokens ───────────────────────────────────────── */
 :root {
-  --bg:          #FAFAFA;
+  --bg:          #F5F0EB;
+  --bg-warm:     #EDE7E0;
   --surface:     #FFFFFF;
-  --surface-2:   #F3F4F6;
-  --border:      #E5E7EB;
-  --border-2:    #D1D5DB;
-  --text:        #111827;
-  --text-2:      #374151;
-  --muted:       #6B7280;
-  --muted-2:     #9CA3AF;
-  --accent:      #00C07A;
-  --accent-bg:   #00C07A14;
-  --accent-2:    #7C3AED;
-  --accent-2-bg: #7C3AED14;
-  --shadow:      0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.04);
-  --shadow-md:   0 4px 12px rgba(0,0,0,.07);
-  --shadow-lg:   0 20px 40px rgba(0,0,0,.08);
-  --radius:      12px;
+  --surface-2:   #F0EBE5;
+  --border:      #DDD6CE;
+  --border-2:    #C9C0B6;
+  --text:        #1A1A1A;
+  --text-2:      #2D2D2D;
+  --muted:       #6B6560;
+  --muted-2:     #948E88;
+  --accent:      #1A1A1A;
+  --accent-bg:   #1A1A1A0C;
+  --accent-2:    #4A4540;
+  --accent-2-bg: #4A45400A;
+  --shadow:      0 1px 3px rgba(0,0,0,.06);
+  --shadow-md:   0 4px 12px rgba(0,0,0,.06);
+  --shadow-lg:   0 20px 40px rgba(0,0,0,.07);
+  --radius:      10px;
 }
 
 .dark {
-  --bg:          #0A0A0A;
-  --surface:     #111111;
-  --surface-2:   #1A1A1A;
-  --border:      #1F2937;
-  --border-2:    #374151;
-  --text:        #F9FAFB;
-  --text-2:      #E5E7EB;
-  --muted:       #9CA3AF;
-  --muted-2:     #6B7280;
-  --accent:      #00D395;
-  --accent-bg:   #00D39514;
-  --accent-2:    #A78BFA;
-  --accent-2-bg: #A78BFA14;
-  --shadow:      0 1px 3px rgba(0,0,0,.5);
-  --shadow-md:   0 4px 12px rgba(0,0,0,.4);
-  --shadow-lg:   0 20px 40px rgba(0,0,0,.5);
+  --bg:          #0F0E0D;
+  --bg-warm:     #161412;
+  --surface:     #1A1816;
+  --surface-2:   #222019;
+  --border:      #2E2B26;
+  --border-2:    #3D3832;
+  --text:        #F0ECE8;
+  --text-2:      #D9D4CE;
+  --muted:       #8A847E;
+  --muted-2:     #6B6560;
+  --accent:      #F0ECE8;
+  --accent-bg:   #F0ECE80C;
+  --accent-2:    #C9C0B6;
+  --accent-2-bg: #C9C0B60A;
+  --shadow:      0 1px 3px rgba(0,0,0,.4);
+  --shadow-md:   0 4px 12px rgba(0,0,0,.3);
+  --shadow-lg:   0 20px 40px rgba(0,0,0,.4);
 }
 
 /* ── Base ────────────────────────────────────────────────── */
@@ -50,10 +52,13 @@ html { scroll-behavior: smooth; }
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: 'Roboto', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   transition: background .2s, color .2s;
 }
+
+h1, h2, h3, .font-display { font-family: 'Roboto', system-ui, sans-serif; }
+.font-mono { font-family: 'JetBrains Mono', monospace; }
 
 /* ── Components ──────────────────────────────────────────── */
 .card {
@@ -67,35 +72,37 @@ body {
 
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-  padding: 10px 22px; border-radius: 8px; font-weight: 600; font-size: 14px;
+  padding: 10px 22px; border-radius: 8px; font-weight: 500; font-size: 14px;
   cursor: pointer; border: none; transition: opacity .15s, transform .1s; text-decoration: none;
+  font-family: 'Roboto', sans-serif;
 }
 .btn:active { transform: scale(.98); }
-.btn-primary { background: var(--accent); color: #fff; }
-.btn-primary:hover { opacity: .88; }
+.btn-primary { background: var(--text); color: var(--bg); }
+.btn-primary:hover { opacity: .85; }
 .btn-outline { background: transparent; color: var(--text); border: 1.5px solid var(--border-2); }
-.btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+.btn-outline:hover { border-color: var(--text); }
 .btn-ghost { background: transparent; color: var(--muted); padding: 8px 12px; }
 .btn-ghost:hover { background: var(--surface-2); color: var(--text); }
 
 .badge {
   display: inline-flex; align-items: center;
-  padding: 2px 10px; border-radius: 99px;
-  font-size: 11px; font-weight: 600; letter-spacing: .02em;
+  padding: 3px 10px; border-radius: 99px;
+  font-size: 11px; font-weight: 500; letter-spacing: .02em;
 }
-.badge-green  { background: var(--accent-bg);   color: var(--accent); }
-.badge-purple { background: var(--accent-2-bg); color: var(--accent-2); }
-.badge-yellow { background: #F59E0B14; color: #D97706; }
-.badge-red    { background: #EF444414; color: #DC2626; }
-.badge-gray   { background: var(--surface-2);   color: var(--muted); }
+.badge-dark   { background: var(--accent-bg); color: var(--text); border: 1px solid var(--border); }
+.badge-green  { background: #E8F5E9; color: #2E7D32; }
+.badge-purple { background: #EDE7F6; color: #5E35B1; }
+.badge-yellow { background: #FFF8E1; color: #F57F17; }
+.badge-red    { background: #FFEBEE; color: #C62828; }
+.badge-gray   { background: var(--surface-2); color: var(--muted); }
 
-.rep-bar  { height: 6px; background: var(--surface-2); border-radius: 99px; overflow: hidden; }
-.rep-fill { height: 100%; background: var(--accent); border-radius: 99px; transition: width .4s; }
+.dark .badge-green  { background: #1B5E2010; color: #66BB6A; }
+.dark .badge-purple { background: #4527A010; color: #B39DDB; }
+.dark .badge-yellow { background: #F57F1710; color: #FFB74D; }
+.dark .badge-red    { background: #C6282810; color: #EF9A9A; }
 
-.gradient-text {
-  background: linear-gradient(135deg, var(--accent), var(--accent-2));
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-}
+.rep-bar  { height: 5px; background: var(--surface-2); border-radius: 99px; overflow: hidden; }
+.rep-fill { height: 100%; background: var(--text); border-radius: 99px; transition: width .4s; }
 
 input, textarea, select {
   background: var(--surface); border: 1.5px solid var(--border); border-radius: 8px;
@@ -103,5 +110,5 @@ input, textarea, select {
   transition: border-color .15s; font-family: inherit;
 }
 input:focus, textarea:focus, select:focus {
-  outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-bg);
+  outline: none; border-color: var(--text); box-shadow: 0 0 0 3px var(--accent-bg);
 }
