@@ -20,7 +20,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <main style={{ minHeight: "calc(100vh - 65px)" }}>{children}</main>
           <footer style={{ borderTop: "1px solid var(--border)", padding: "32px 24px", fontSize: 13, color: "var(--muted)" }}>
             <div style={{ maxWidth: 1100, margin: "0 auto", display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
-              <span style={{ fontFamily: "Fraunces,serif", fontWeight: 700, fontSize: 15, color: "var(--text)" }}>Arc Agent Hub</span>
+              <span style={{ fontWeight: 700, fontSize: 15, color: "var(--text)" }}>Arc Agent Hub</span>
               <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
                 {[
                   ["arc-agent-payments", "https://github.com/sethoshi18/arc-agent-payments"],
