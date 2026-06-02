@@ -3,14 +3,12 @@ import { useChainId } from "wagmi";
 
 export function NetworkBanner() {
   const chainId = useChainId();
-  const isArc = chainId === 5042002;
-
-  if (isArc) return null;
+  if (chainId === 5042002) return null;
 
   return (
-    <div className="bg-yellow-900/30 border border-yellow-700/50 text-yellow-300 text-sm px-4 py-2 rounded-lg mb-6">
-      ⚠️ Switch to <strong>Arc Testnet</strong> (Chain ID 5042002) to interact with contracts.
-      Add it in MetaMask: RPC <code className="font-mono text-xs">https://rpc.testnet.arc.network</code>
+    <div className="card" style={{ padding: "12px 16px", marginBottom: 20, fontSize: 13, color: "var(--muted)" }}>
+      Switch to <strong style={{ color: "var(--text)" }}>Arc Testnet</strong> (Chain ID 5042002) —
+      RPC: <code style={{ fontFamily: "JetBrains Mono,monospace", fontSize: 11 }}>https://rpc.testnet.arc.network</code>
     </div>
   );
 }

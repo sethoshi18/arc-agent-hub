@@ -1,61 +1,42 @@
 "use client";
-import { useReadContract, useReadContracts } from "wagmi";
+import { useReadContract } from "wagmi";
 import { RFPCard } from "@/components/RFPCard";
 import { NetworkBanner } from "@/components/NetworkBanner";
 import { CONTRACTS, MARKET_ABI } from "@/lib/contracts";
 import Link from "next/link";
 
+function RFPRow({ rfpId }: { rfpId: bigint }) {
+  const { data: rfp } = useReadContract({ address: CONTRACTS.agentMarket, abi: MARKET_ABI, functionName: "getRFP", args: [rfpId] });
+  const { data: bids } = useReadContract({ address: CONTRACTS.agentMarket, abi: MARKET_ABI, functionName: "getBidsByRFP", args: [rfpId] });
+  if (!rfp) return null;
+  return <RFPCard rfp={{ ...rfp, id: rfpId }} bidCount={bids?.length} />;
+}
+
 export default function RFPsPage() {
-  const { data: rfpIds, isLoading } = useReadContract({
-    address: CONTRACTS.agentMarket,
-    abi: MARKET_ABI,
-    functionName: "getOpenRFPs",
-  });
-
-  const rfpContracts = (rfpIds ?? []).map((id) => ({
-    address: CONTRACTS.agentMarket,
-    abi: MARKET_ABI,
-    functionName: "getRFP" as const,
-    args: [id] as [bigint],
-  }));
-
-  const { data: rfpData } = useReadContracts({ contracts: rfpContracts });
+  const { data: rfpIds, isLoading } = useReadContract({ address: CONTRACTS.agentMarket, abi: MARKET_ABI, functionName: "getOpenRFPs" });
 
   return (
-    <div>
+    <div style={{ maxWidth: 1100, margin: "0 auto", padding: "40px 24px" }}>
       <NetworkBanner />
-      <div className="flex items-center justify-between mb-8">
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 32 }}>
         <div>
-          <h1 className="font-display font-bold text-3xl mb-1">Open RFPs</h1>
-          <p className="text-arc-muted text-sm">Post a request, receive bids from agents — accept the best one</p>
+          <h1 style={{ fontWeight: 700, fontSize: 28, color: "var(--text)", letterSpacing: "-0.02em", marginBottom: 4 }}>Open RFPs</h1>
+          <p style={{ fontSize: 14, color: "var(--muted)" }}>Jobs posted by clients — submit a bid as an agent</p>
         </div>
-        <Link
-          href="/rfps/new"
-          className="bg-arc-accent text-arc-bg font-semibold text-sm px-4 py-2 rounded-lg hover:bg-arc-accent/90 transition-colors"
-        >
-          + Post RFP
-        </Link>
+        <Link href="/rfps/new" className="btn btn-primary" style={{ fontSize: 13, padding: "8px 16px" }}>Post RFP</Link>
       </div>
 
-      {isLoading && (
-        <div className="text-arc-muted text-center py-16">Loading RFPs from Arc testnet...</div>
-      )}
+      {isLoading && <p style={{ textAlign: "center", color: "var(--muted)", padding: "64px 0" }}>Loading RFPs from Arc testnet...</p>}
 
-      {rfpIds?.length === 0 && (
-        <div className="text-center py-16 border border-dashed border-arc-border rounded-xl">
-          <p className="text-arc-muted mb-3">No open RFPs yet</p>
-          <Link href="/rfps/new" className="text-arc-accent text-sm hover:underline">
-            Post the first one →
-          </Link>
+      {rfpIds && rfpIds.length === 0 && (
+        <div className="card" style={{ textAlign: "center", padding: 48 }}>
+          <p style={{ color: "var(--muted)", marginBottom: 12 }}>No open RFPs right now</p>
+          <Link href="/rfps/new" style={{ color: "var(--text)", fontSize: 14, fontWeight: 500 }}>Post the first RFP →</Link>
         </div>
       )}
 
-      <div className="space-y-3">
-        {rfpData?.map((result, i) => {
-          if (result.status !== "success") return null;
-          const rfp = result.result as any;
-          return <RFPCard key={rfp.id?.toString()} rfp={rfp} />;
-        })}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 16 }}>
+        {rfpIds?.map((id) => <RFPRow key={id.toString()} rfpId={id} />)}
       </div>
     </div>
   );

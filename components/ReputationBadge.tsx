@@ -1,4 +1,4 @@
-import { repColor, repPct } from "@/lib/contracts";
+import { repPct } from "@/lib/contracts";
 
 interface Props {
   bps: bigint;
@@ -7,19 +7,17 @@ interface Props {
 
 export function ReputationBadge({ bps, size = "md" }: Props) {
   const pct = Number(bps) / 100;
-  const color = Number(bps) >= 7000 ? "#22C55E" : Number(bps) >= 5000 ? "#F59E0B" : "#EF4444";
-  const textSize = size === "sm" ? "text-xs" : size === "lg" ? "text-base" : "text-sm";
+  const w = size === "sm" ? 48 : size === "lg" ? 72 : 60;
+  const h = size === "sm" ? 4 : 5;
 
   return (
-    <span
-      className={`inline-flex items-center gap-1 font-mono ${textSize} font-semibold`}
-      style={{ color }}
-    >
-      <span
-        className="w-2 h-2 rounded-full inline-block"
-        style={{ backgroundColor: color }}
-      />
-      {repPct(bps)}% rep
-    </span>
+    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+      <span style={{ fontSize: size === "sm" ? 11 : 13, fontWeight: 600, color: "var(--text)", fontFamily: "JetBrains Mono, monospace" }}>
+        {repPct(bps)}%
+      </span>
+      <div className="rep-bar" style={{ width: w }}>
+        <div className="rep-fill" style={{ width: `${pct}%` }} />
+      </div>
+    </div>
   );
 }

@@ -1,158 +1,99 @@
 "use client";
-import { useReadContract, useReadContracts, useWriteContract, useAccount } from "wagmi";
+import { useParams } from "next/navigation";
+import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
+import { CONTRACTS, MARKET_ABI, IDENTITY_ABI, formatUsdc, shortAddr, arcScan, repPct, RFP_STATUS } from "@/lib/contracts";
 import { ReputationBadge } from "@/components/ReputationBadge";
-import { CONTRACTS, MARKET_ABI, IDENTITY_ABI, ERC20_ABI, RFP_STATUS, formatUsdc, shortAddr, arcScan } from "@/lib/contracts";
-import { useState } from "react";
-import { parseUnits } from "viem";
+import Link from "next/link";
 
 function BidRow({ bidId, rfpId, isClient }: { bidId: bigint; rfpId: bigint; isClient: boolean }) {
   const { data: bid } = useReadContract({ address: CONTRACTS.agentMarket, abi: MARKET_ABI, functionName: "getBid", args: [bidId] });
-  const { data: agent } = useReadContract({ address: CONTRACTS.agentIdentity, abi: IDENTITY_ABI, functionName: "getAgent", args: [bid?.agentTokenId ?? 0n], query: { enabled: !!bid } });
+  const { data: agent } = useReadContract({ address: CONTRACTS.agentIdentity, abi: IDENTITY_ABI, functionName: "getAgent", args: [bid?.agentTokenId ?? BigInt(0)], query: { enabled: !!bid } });
   const { writeContract, isPending } = useWriteContract();
 
   if (!bid || !agent) return null;
 
   return (
-    <div className="bg-arc-bg border border-arc-border rounded-lg p-4">
-      <div className="flex items-start justify-between mb-2">
+    <div className="card" style={{ padding: 20, marginBottom: 12 }}>
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12, marginBottom: 12 }}>
         <div>
-          <span className="font-semibold">{agent.name}</span>
-          <span className="text-arc-muted text-xs ml-2 font-mono">#{bid.agentTokenId.toString()}</span>
+          <p style={{ fontWeight: 600, fontSize: 14, color: "var(--text)", marginBottom: 4 }}>{agent.name}</p>
+          <p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.5 }}>{bid.proposal}</p>
         </div>
-        <div className="flex items-center gap-3">
-          <ReputationBadge bps={bid.agentReputation} size="sm" />
-          <span className="text-arc-accent font-semibold text-sm">{formatUsdc(bid.priceUsdc)} USDC</span>
-        </div>
+        <ReputationBadge bps={bid.agentReputation} size="sm" />
       </div>
-      <p className="text-arc-muted text-sm mb-3 leading-relaxed">{bid.proposal}</p>
-      {isClient && (
-        <button
-          onClick={() => writeContract({ address: CONTRACTS.agentMarket, abi: MARKET_ABI, functionName: "acceptBid", args: [rfpId, bidId] })}
-          disabled={isPending}
-          className="text-xs bg-arc-accent text-arc-bg font-semibold px-3 py-1.5 rounded-lg hover:bg-arc-accent/90 transition-colors disabled:opacity-50"
-        >
-          {isPending ? "Accepting..." : "Accept Bid"}
-        </button>
-      )}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingTop: 12, borderTop: "1px solid var(--border)" }}>
+        <div style={{ display: "flex", gap: 16, fontSize: 12, color: "var(--muted)" }}>
+          <span style={{ fontWeight: 600, color: "var(--text)" }}>{formatUsdc(bid.priceUsdc)} USDC</span>
+          <span>Agent #{bid.agentTokenId.toString()}</span>
+          <span>{repPct(bid.agentReputation)}% rep</span>
+        </div>
+        {isClient && (
+          <button className="btn btn-primary" style={{ padding: "6px 14px", fontSize: 12 }}
+            disabled={isPending}
+            onClick={() => writeContract({ address: CONTRACTS.agentMarket, abi: MARKET_ABI, functionName: "acceptBid", args: [rfpId, bidId] })}>
+            {isPending ? "Accepting..." : "Accept bid"}
+          </button>
+        )}
+      </div>
     </div>
   );
 }
 
-export default function RFPDetailPage({ params }: { params: { rfpId: string } }) {
-  const rfpId = BigInt(params.rfpId);
+export default function RFPDetailPage() {
+  const params = useParams();
+  const rfpId = BigInt(params.rfpId as string);
   const { address } = useAccount();
-  const [proposal, setProposal] = useState("");
-  const [price, setPrice] = useState("");
-  const [agentId, setAgentId] = useState("");
-
   const { data: rfp } = useReadContract({ address: CONTRACTS.agentMarket, abi: MARKET_ABI, functionName: "getRFP", args: [rfpId] });
   const { data: bidIds } = useReadContract({ address: CONTRACTS.agentMarket, abi: MARKET_ABI, functionName: "getBidsByRFP", args: [rfpId] });
-  const { data: myAgents } = useReadContract({ address: CONTRACTS.agentIdentity, abi: IDENTITY_ABI, functionName: "getAgentsByOwner", args: [address ?? "0x0000000000000000000000000000000000000000"], query: { enabled: !!address } });
-  const { writeContract, isPending } = useWriteContract();
 
-  if (!rfp) return <div className="text-arc-muted py-16 text-center">Loading RFP #{params.rfpId}...</div>;
+  if (!rfp) return <div style={{ maxWidth: 1100, margin: "0 auto", padding: "64px 24px", textAlign: "center", color: "var(--muted)" }}>Loading RFP #{rfpId.toString()}...</div>;
 
   const isClient = address?.toLowerCase() === rfp.client.toLowerCase();
-  const statusLabel = RFP_STATUS[rfp.status] ?? "Unknown";
   const now = BigInt(Math.floor(Date.now() / 1000));
-  const biddingOpen = rfp.status === 0 && rfp.expiresAt > now;
-
-  const handleSubmitBid = () => {
-    if (!price || !agentId || !proposal) return;
-    writeContract({
-      address: CONTRACTS.agentMarket,
-      abi: MARKET_ABI,
-      functionName: "submitBid",
-      args: [rfpId, BigInt(agentId), parseUnits(price, 6), proposal],
-    });
-  };
+  const isExpired = rfp.expiresAt <= now;
 
   return (
-    <div className="max-w-3xl mx-auto">
-      {/* RFP Header */}
-      <div className="bg-arc-card border border-arc-border rounded-xl p-6 mb-6">
-        <div className="flex items-start justify-between mb-4">
-          <span className={`text-xs px-2 py-0.5 rounded-full font-mono ${rfp.status === 0 ? "bg-green-900/40 text-green-400" : "bg-gray-900/40 text-gray-400"}`}>
-            {statusLabel}
+    <div style={{ maxWidth: 760, margin: "0 auto", padding: "40px 24px" }}>
+      <Link href="/rfps" style={{ fontSize: 13, color: "var(--muted)", textDecoration: "none", marginBottom: 20, display: "inline-block" }}>← Back to RFPs</Link>
+
+      <div className="card" style={{ padding: 28, marginBottom: 24 }}>
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12, marginBottom: 16 }}>
+          <h1 style={{ fontWeight: 700, fontSize: 20, color: "var(--text)", lineHeight: 1.4 }}>{rfp.description}</h1>
+          <span className={`badge ${rfp.status === 0 ? "badge-dark" : rfp.status === 1 ? "badge-purple" : "badge-gray"}`}>
+            {RFP_STATUS[rfp.status] ?? "Unknown"}
           </span>
-          <span className="text-arc-muted text-xs font-mono">RFP #{rfpId.toString()}</span>
         </div>
-        <p className="text-lg mb-5 leading-relaxed">{rfp.description}</p>
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16, borderTop: "1px solid var(--border)", paddingTop: 16 }}>
           <div>
-            <p className="text-arc-muted text-xs mb-1">Budget</p>
-            <p className="text-arc-accent font-semibold">{formatUsdc(rfp.budgetUsdc)} USDC</p>
+            <p style={{ fontSize: 11, color: "var(--muted)", marginBottom: 3, textTransform: "uppercase", letterSpacing: ".08em" }}>Budget</p>
+            <p style={{ fontWeight: 600, color: "var(--text)", fontSize: 15 }}>{formatUsdc(rfp.budgetUsdc)} USDC</p>
           </div>
           <div>
-            <p className="text-arc-muted text-xs mb-1">Posted by</p>
-            <a href={arcScan(rfp.client)} target="_blank" className="font-mono text-xs hover:text-white transition-colors">{shortAddr(rfp.client)}</a>
+            <p style={{ fontSize: 11, color: "var(--muted)", marginBottom: 3, textTransform: "uppercase", letterSpacing: ".08em" }}>Bidding</p>
+            <p style={{ fontWeight: 500, fontSize: 13, color: isExpired ? "var(--muted)" : "var(--text)" }}>{isExpired ? "Closed" : "Open"}</p>
           </div>
           <div>
-            <p className="text-arc-muted text-xs mb-1">Deadline</p>
-            <p className="text-sm">{new Date(Number(rfp.deadline) * 1000).toLocaleDateString()}</p>
+            <p style={{ fontSize: 11, color: "var(--muted)", marginBottom: 3, textTransform: "uppercase", letterSpacing: ".08em" }}>Client</p>
+            <a href={arcScan(rfp.client)} target="_blank" style={{ fontSize: 12, color: "var(--muted)", fontFamily: "JetBrains Mono,monospace", textDecoration: "none" }}>
+              {shortAddr(rfp.client)} ↗
+            </a>
           </div>
         </div>
       </div>
 
-      {/* Bids */}
-      <div className="mb-6">
-        <h2 className="font-display font-bold text-xl mb-4">
-          Bids <span className="text-arc-muted font-body font-normal text-sm">({bidIds?.length ?? 0})</span>
-        </h2>
-        {bidIds?.length === 0 && <p className="text-arc-muted text-sm">No bids yet — be the first.</p>}
-        <div className="space-y-3">
-          {bidIds?.map((id) => <BidRow key={id.toString()} bidId={id} rfpId={rfpId} isClient={isClient} />)}
-        </div>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+        <h2 style={{ fontWeight: 700, fontSize: 18, color: "var(--text)" }}>Bids ({bidIds?.length ?? 0})</h2>
+        <span style={{ fontSize: 12, color: "var(--muted)" }}>Sorted by reputation</span>
       </div>
 
-      {/* Submit Bid Form */}
-      {biddingOpen && !isClient && address && (
-        <div className="bg-arc-card border border-arc-border rounded-xl p-6">
-          <h2 className="font-display font-bold text-xl mb-4">Submit a Bid</h2>
-          <div className="space-y-4">
-            {myAgents && myAgents.length > 0 && (
-              <div>
-                <label className="text-arc-muted text-xs block mb-1.5">Your agent token ID</label>
-                <select
-                  value={agentId}
-                  onChange={(e) => setAgentId(e.target.value)}
-                  className="w-full bg-arc-bg border border-arc-border rounded-lg px-3 py-2 text-sm text-white focus:border-arc-accent outline-none"
-                >
-                  <option value="">Select agent...</option>
-                  {myAgents.map((id) => <option key={id.toString()} value={id.toString()}>Agent #{id.toString()}</option>)}
-                </select>
-              </div>
-            )}
-            <div>
-              <label className="text-arc-muted text-xs block mb-1.5">Price (USDC, max {formatUsdc(rfp.budgetUsdc)})</label>
-              <input
-                type="number"
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
-                placeholder="e.g. 40.00"
-                className="w-full bg-arc-bg border border-arc-border rounded-lg px-3 py-2 text-sm text-white focus:border-arc-accent outline-none"
-              />
-            </div>
-            <div>
-              <label className="text-arc-muted text-xs block mb-1.5">Proposal</label>
-              <textarea
-                value={proposal}
-                onChange={(e) => setProposal(e.target.value)}
-                placeholder="Describe your approach..."
-                rows={3}
-                className="w-full bg-arc-bg border border-arc-border rounded-lg px-3 py-2 text-sm text-white focus:border-arc-accent outline-none resize-none"
-              />
-            </div>
-            <button
-              onClick={handleSubmitBid}
-              disabled={isPending || !agentId || !price || !proposal}
-              className="w-full bg-arc-accent text-arc-bg font-semibold py-2.5 rounded-lg hover:bg-arc-accent/90 transition-colors disabled:opacity-50 text-sm"
-            >
-              {isPending ? "Submitting..." : "Submit Bid"}
-            </button>
-          </div>
+      {bidIds && bidIds.length === 0 && (
+        <div className="card" style={{ textAlign: "center", padding: 40 }}>
+          <p style={{ color: "var(--muted)" }}>No bids yet. Agents can submit proposals from the MCP server.</p>
         </div>
       )}
+
+      {bidIds?.map((id) => <BidRow key={id.toString()} bidId={id} rfpId={rfpId} isClient={isClient} />)}
     </div>
   );
 }

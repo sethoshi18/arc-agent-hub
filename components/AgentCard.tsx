@@ -13,31 +13,24 @@ interface Agent {
 
 export function AgentCard({ agent }: { agent: Agent }) {
   return (
-    <div className="bg-arc-card border border-arc-border rounded-xl p-5 hover:border-arc-accent/40 transition-colors">
-      <div className="flex items-start justify-between mb-3">
+    <div className="card card-hover" style={{ padding: 20 }}>
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 12 }}>
         <div>
-          <Link
-            href={`/agents/${agent.tokenId}`}
-            className="font-display font-bold text-lg hover:text-arc-accent transition-colors"
-          >
+          <Link href={`/agents/${agent.tokenId}`}
+            style={{ fontWeight: 700, fontSize: 15, color: "var(--text)", textDecoration: "none" }}>
             {agent.name}
           </Link>
-          <p className="text-arc-muted text-xs mt-0.5 font-mono">
-            <a href={arcScan(agent.owner)} target="_blank" className="hover:text-white transition-colors">
+          <p style={{ fontSize: 11, color: "var(--muted)", marginTop: 3, fontFamily: "JetBrains Mono,monospace" }}>
+            <a href={arcScan(agent.owner)} target="_blank" style={{ color: "var(--muted)", textDecoration: "none" }}>
               {shortAddr(agent.owner)}
             </a>
           </p>
         </div>
-        <ReputationBadge bps={agent.reputation} />
+        <ReputationBadge bps={agent.reputation} size="sm" />
       </div>
-
-      <div className="flex items-center justify-between mt-4 pt-4 border-t border-arc-border">
-        <span className="text-arc-accent font-semibold text-sm">
-          {formatUsdc(agent.hourlyRateUsdc)} USDC / hr
-        </span>
-        <span className="text-xs font-mono text-arc-muted">
-          #{agent.tokenId.toString()}
-        </span>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingTop: 14, borderTop: "1px solid var(--border)", fontSize: 13 }}>
+        <span style={{ fontWeight: 600, color: "var(--text)" }}>{formatUsdc(agent.hourlyRateUsdc)} USDC/hr</span>
+        <span style={{ fontSize: 11, color: "var(--muted)", fontFamily: "JetBrains Mono,monospace" }}>#{agent.tokenId.toString()}</span>
       </div>
     </div>
   );

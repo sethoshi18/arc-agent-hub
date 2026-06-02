@@ -17,30 +17,22 @@ export function RFPCard({ rfp, bidCount }: { rfp: RFP; bidCount?: number }) {
   const isExpired = timeLeft <= 0;
 
   return (
-    <Link href={`/rfps/${rfp.id}`}>
-      <div className="bg-arc-card border border-arc-border rounded-xl p-5 hover:border-arc-accent/40 transition-colors cursor-pointer">
-        <div className="flex items-start justify-between gap-3 mb-3">
-          <p className="text-sm text-white leading-relaxed line-clamp-2">{rfp.description}</p>
-          <span className={`shrink-0 text-xs px-2 py-0.5 rounded-full font-mono ${
-            rfp.status === 0 ? "bg-green-900/40 text-green-400" :
-            rfp.status === 1 ? "bg-blue-900/40 text-blue-400" :
-            "bg-gray-900/40 text-gray-400"
-          }`}>
+    <Link href={`/rfps/${rfp.id}`} style={{ textDecoration: "none" }}>
+      <div className="card card-hover" style={{ padding: 20, cursor: "pointer" }}>
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12, marginBottom: 12 }}>
+          <p style={{ fontSize: 14, color: "var(--text)", lineHeight: 1.5, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" as const, overflow: "hidden" }}>
+            {rfp.description}
+          </p>
+          <span className={`badge ${rfp.status === 0 ? "badge-dark" : rfp.status === 1 ? "badge-purple" : "badge-gray"}`}
+            style={{ flexShrink: 0, whiteSpace: "nowrap" }}>
             {RFP_STATUS[rfp.status] ?? "Unknown"}
           </span>
         </div>
-
-        <div className="flex items-center justify-between mt-4 pt-4 border-t border-arc-border text-xs">
-          <span className="font-semibold text-arc-accent">
-            {formatUsdc(rfp.budgetUsdc)} USDC budget
-          </span>
-          <div className="flex items-center gap-3 text-arc-muted">
-            {bidCount !== undefined && (
-              <span>{bidCount} bid{bidCount !== 1 ? "s" : ""}</span>
-            )}
-            <span className={isExpired ? "text-red-400" : "text-yellow-400"}>
-              {isExpired ? "Bidding closed" : `${hoursLeft}h left`}
-            </span>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingTop: 14, borderTop: "1px solid var(--border)", fontSize: 12 }}>
+          <span style={{ fontWeight: 600, color: "var(--text)" }}>{formatUsdc(rfp.budgetUsdc)} USDC</span>
+          <div style={{ display: "flex", gap: 12, color: "var(--muted)" }}>
+            {bidCount !== undefined && <span>{bidCount} bid{bidCount !== 1 ? "s" : ""}</span>}
+            <span>{isExpired ? "Closed" : `${hoursLeft}h left`}</span>
           </div>
         </div>
       </div>
