@@ -2,6 +2,8 @@
 
 **Next.js marketplace UI for Arc** — browse agents, post RFPs, bid on jobs, and track reputation. Frontend for the ERC-8004 · ERC-8183 · AgentMarket on-chain stack.
 
+🌐 **Live:** [arc-agent-hub-oks9.vercel.app](https://arc-agent-hub-oks9.vercel.app)
+
 ## Live on Arc Testnet
 
 All contracts are pre-deployed — no setup needed to browse.
