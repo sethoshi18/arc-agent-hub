@@ -6,6 +6,7 @@ const config: Config = {
     "./components/**/*.{ts,tsx}",
     "./lib/**/*.{ts,tsx}",
   ],
+  darkMode: "class",
   theme: {
     extend: {
       fontFamily: {
@@ -14,13 +15,15 @@ const config: Config = {
         mono: ["JetBrains Mono", "monospace"],
       },
       colors: {
+        // CSS variable bridge — use these in Tailwind classes
+        bg:      "var(--bg)",
+        surface: "var(--surface)",
+        border:  "var(--border)",
+        muted:   "var(--muted)",
+        accent:  "var(--accent)",
         arc: {
-          bg:       "#0A0A0A",
-          card:     "#111111",
-          border:   "#1F1F1F",
-          muted:    "#888888",
-          accent:   "#00D395",   // USDC green
-          purple:   "#7C3AED",
+          accent: "#00D395",
+          purple: "#7C3AED",
         },
       },
     },
