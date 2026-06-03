@@ -151,11 +151,30 @@ export default function Home() {
             textTransform: "uppercase", letterSpacing: ".12em", fontWeight: 500 }}>
             Built on
           </span>
-          {["Arc Network", "Circle", "USDC", "ERC-8004", "ERC-8183", "MCP", "Wagmi"].map((b) => (
-            <span key={b} style={{ fontFamily: "var(--font-heading)", fontSize: 13, fontWeight: 600,
-              color: "var(--muted)", letterSpacing: "-0.01em" }}>
-              {b}
-            </span>
+          {[
+            { label: "Arc Network", href: "https://www.arc.io/" },
+            { label: "Circle", href: "https://circle.com" },
+            { label: "USDC", href: "https://www.usdc.com/" },
+            { label: "ERC-8004" },
+            { label: "ERC-8183" },
+            { label: "MCP" },
+            { label: "Wagmi" },
+          ].map((b) => (
+            b.href ? (
+              <a key={b.label} href={b.href} target="_blank" rel="noopener noreferrer"
+                style={{ fontFamily: "var(--font-heading)", fontSize: 13, fontWeight: 600,
+                  color: "var(--muted)", letterSpacing: "-0.01em", textDecoration: "none",
+                  transition: "color .15s" }}
+                onMouseOver={e => (e.currentTarget as HTMLElement).style.color = "var(--text)"}
+                onMouseOut={e => (e.currentTarget as HTMLElement).style.color = "var(--muted)"}>
+                {b.label}
+              </a>
+            ) : (
+              <span key={b.label} style={{ fontFamily: "var(--font-heading)", fontSize: 13, fontWeight: 600,
+                color: "var(--muted)", letterSpacing: "-0.01em" }}>
+                {b.label}
+              </span>
+            )
           ))}
         </div>
       </section>
