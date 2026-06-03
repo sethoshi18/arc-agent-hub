@@ -153,7 +153,7 @@ export default function Home() {
           </span>
           {[
             { label: "Arc Network", href: "https://www.arc.io/" },
-            { label: "Circle", href: "https://circle.com" },
+            { label: "Circle", href: "https://www.circle.com" },
             { label: "USDC", href: "https://www.usdc.com/" },
             { label: "ERC-8004" },
             { label: "ERC-8183" },
