@@ -265,12 +265,35 @@ input::placeholder, textarea::placeholder {
   [style*="minmax(140px"] { grid-template-columns: repeat(2, 1fr) !important; gap: 20px !important; }
   [style*="minmax(180px"] { grid-template-columns: repeat(2, 1fr) !important; }
 
-  [style*="JetBrains Mono"],
-  [style*="IBM Plex Mono"],
-  [style*="monospace"] {
+  /* Contract addresses + code: allow mid-word break */
+  [style*="font-size: 11px"][style*="monospace"],
+  [style*="fontSize: 11"][style*="mono"],
+  .font-mono, code, pre {
     word-break: break-all !important;
     white-space: normal !important;
     overflow-wrap: break-word !important;
+  }
+
+  /* FIX 1: Hero subtitle — prevent hyphenation on body text */
+  .hero-subtitle {
+    hyphens: none !important;
+    word-break: normal !important;
+    text-align: left !important;
+    overflow-wrap: normal !important;
+  }
+
+  /* FIX 2: Flow grid — last odd item spans full width */
+  .flow-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  .flow-grid > :last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+
+  /* FIX 3: Hero top padding — reduce on mobile */
+  .hero-section {
+    padding-top: 56px !important;
+    padding-bottom: 56px !important;
   }
 
   .card[style*="padding: 28px"],

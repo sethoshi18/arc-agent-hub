@@ -71,6 +71,7 @@ export default function HomePage() {
 
       {/* ── 1. HERO ────────────────────────────────────────────── */}
       <section
+        className="hero-section"
         style={{
           padding: "120px 24px 80px",
           maxWidth: 900,
@@ -116,6 +117,7 @@ export default function HomePage() {
 
         {/* Subtitle */}
         <p
+          className="hero-subtitle"
           style={{
             fontFamily: "'IBM Plex Mono', monospace",
             fontSize: 16,
@@ -434,6 +436,7 @@ export default function HomePage() {
           </h2>
 
           <div
+            className="flow-grid"
             style={{
               display: "grid",
               gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
@@ -611,7 +614,7 @@ export default function HomePage() {
       <section
         style={{
           padding: "80px 24px",
-          background: "#EDE8DC",
+          background: "#F5F0E8",
           textAlign: "center",
         }}
       >
