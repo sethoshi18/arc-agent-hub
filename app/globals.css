@@ -186,3 +186,97 @@ input:focus, textarea:focus, select:focus {
 
 /* ── Utility — font overrides for inline styles ──────────── */
 nav a { font-family: var(--font-heading) !important; }
+
+/* ═══════════════════════════════════════════════════════════
+   MOBILE RESPONSIVE — Inner Pages
+   Targets common inline style patterns across all pages
+   without requiring individual page file edits.
+   ═══════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+
+  /* ── Containers: tighter horizontal padding ──────────────── */
+  main > div[style] {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    padding-top: 24px !important;
+  }
+
+  /* ── Page headers: stack title + button vertically ────────── */
+  /* All pages use: display:flex, justifyContent:space-between */
+  main > div > div[style*="space-between"] {
+    flex-wrap: wrap !important;
+    gap: 12px !important;
+  }
+
+  /* ── Info grids: 3-column → 1-column on mobile ──────────── */
+  /* Detail pages use: gridTemplateColumns: repeat(3, 1fr) */
+  [style*="repeat(3, 1fr)"] {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  /* ── Form grids: 2-column → 1-column on mobile ─────────── */
+  /* Form pages use: gridTemplateColumns: 1fr 1fr */
+  [style*="grid-template-columns: 1fr 1fr"],
+  [style*="grid-template-columns:1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ── Card grids: full-width single column on small screens ─ */
+  [style*="minmax(320px"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ── Monospace addresses: allow wrapping ─────────────────── */
+  [style*="JetBrains Mono"],
+  [style*="monospace"] {
+    word-break: break-all !important;
+    white-space: normal !important;
+    overflow-wrap: break-word !important;
+  }
+
+  /* ── Card padding: slightly tighter on mobile ──────────── */
+  .card[style*="padding: 28px"],
+  .card[style*="padding:28px"] {
+    padding: 20px !important;
+  }
+
+  /* ── Hero heading: smaller on mobile ────────────────────── */
+  h1[style*="clamp(38px"] {
+    font-size: clamp(32px, 8vw, 48px) !important;
+  }
+
+  /* ── Footer: stack links vertically ─────────────────────── */
+  footer > div[style] {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 16px !important;
+  }
+  footer > div > div[style*="gap: 20px"],
+  footer > div > div[style*="gap:20px"] {
+    flex-wrap: wrap !important;
+    gap: 12px !important;
+  }
+
+  /* ── Buttons: full-width on very small screens ─────────── */
+  .btn {
+    font-size: 13px;
+  }
+
+  /* ── Stats bar: 2 columns instead of 5 ─────────────────── */
+  [style*="minmax(140px"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 20px !important;
+  }
+
+  /* ── Repo grid: single column ──────────────────────────── */
+  [style*="minmax(260px"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ── Flow/step cards: 2 columns instead of 5 ──────────── */
+  [style*="minmax(180px"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
