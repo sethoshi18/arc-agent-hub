@@ -1,160 +1,219 @@
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap');
-@import url('https://cdn.jsdelivr.net/npm/geist@1.3.1/dist/fonts/geist-sans/style.css');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* ── Design tokens ───────────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════════
+   ARC AGENT HUB — Design System
+   Inter + IBM Plex Mono · Antique Gold · Editorial Cream
+   ══════════════════════════════════════════════════════════════ */
+
 :root {
-  --bg:          #F5F0EB;
-  --bg-warm:     #EDE7E0;
-  --surface:     #FFFFFF;
-  --surface-2:   #F0EBE5;
-  --border:      #DDD6CE;
-  --border-2:    #C9C0B6;
+  /* Palette */
+  --bg:          #F5F0E8;
+  --bg-warm:     #EDE8DC;
+  --surface:     #F5F0E8;
+  --surface-2:   #EDE8DC;
+  --border:      #D4C5A9;
+  --border-2:    #C9A55A;
   --text:        #1A1A1A;
-  --text-2:      #2D2D2D;
-  --muted:       #6B6560;
-  --muted-2:     #948E88;
-  --accent:      #1A1A1A;
-  --accent-bg:   #1A1A1A0C;
-  --accent-2:    #4A4540;
-  --accent-2-bg: #4A45400A;
-  --shadow:      0 1px 3px rgba(0,0,0,.06);
-  --shadow-md:   0 4px 12px rgba(0,0,0,.06);
-  --shadow-lg:   0 20px 40px rgba(0,0,0,.07);
+  --text-2:      #2C2416;
+  --muted:       #3D3530;
+  --muted-2:     #6B6560;
+  --accent:      #A0722A;
+  --accent-bg:   rgba(160, 114, 42, 0.08);
+  --accent-2:    #C9A55A;
+  --accent-2-bg: rgba(201, 165, 90, 0.08);
+  --gold:        #A0722A;
+  --gold-light:  #C9A55A;
+
+  /* Shadows */
+  --shadow:      0 2px 8px rgba(44, 36, 22, 0.07);
+  --shadow-md:   0 4px 16px rgba(44, 36, 22, 0.09);
+  --shadow-lg:   0 12px 32px rgba(44, 36, 22, 0.11);
+
   --radius:      10px;
 
-  /* Font stacks */
-  --font-heading: 'Manrope', system-ui, sans-serif;
-  --font-body:    'Geist', system-ui, sans-serif;
-  --font-mono:    'JetBrains Mono', monospace;
+  /* Typography */
+  --font-heading: 'Inter', system-ui, sans-serif;
+  --font-body:    'IBM Plex Mono', monospace;
+  --font-mono:    'IBM Plex Mono', monospace;
 }
 
-.dark {
-  --bg:          #0F0E0D;
-  --bg-warm:     #161412;
-  --surface:     #1A1816;
-  --surface-2:   #222019;
-  --border:      #2E2B26;
-  --border-2:    #3D3832;
-  --text:        #F0ECE8;
-  --text-2:      #D9D4CE;
-  --muted:       #8A847E;
-  --muted-2:     #6B6560;
-  --accent:      #F0ECE8;
-  --accent-bg:   #F0ECE80C;
-  --accent-2:    #C9C0B6;
-  --accent-2-bg: #C9C0B60A;
-  --shadow:      0 1px 3px rgba(0,0,0,.4);
-  --shadow-md:   0 4px 12px rgba(0,0,0,.3);
-  --shadow-lg:   0 20px 40px rgba(0,0,0,.4);
-}
-
-/* ── Base ────────────────────────────────────────────────── */
+/* ── Base ────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }
 html { scroll-behavior: smooth; overflow-x: hidden; }
 body {
   background: var(--bg);
-  color: var(--text);
+  color: var(--muted);
   font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
-  transition: background .2s, color .2s;
   overflow-x: hidden;
+  margin: 0;
 }
 
-/* Manrope — brand headings, UI controls, technical labels */
-h1, h2, h3, .font-display {
+/* Headings: Inter */
+h1, h2, h3, h4, .font-display {
   font-family: var(--font-heading);
+  color: var(--text);
+  line-height: 1.15;
 }
 
-/* Geist — body, descriptions, functional labels */
-p, span, label, .font-body {
+/* Body + mono: IBM Plex Mono */
+p, span, label, a, li, td, th, .font-body {
   font-family: var(--font-body);
 }
 
-/* JetBrains Mono — contract addresses, hashes, code */
 .font-mono, code, pre {
   font-family: var(--font-mono);
 }
 
-/* ── Components ──────────────────────────────────────────── */
+a { color: inherit; }
+
+/* ── Cards ───────────────────────────────────────────────────── */
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
 }
-.card-hover { transition: box-shadow .15s, border-color .15s, transform .15s; }
-.card-hover:hover { box-shadow: var(--shadow-lg); border-color: var(--border-2); transform: translateY(-2px); }
+.card-hover {
+  transition: box-shadow .2s, border-color .2s, transform .2s;
+}
+.card-hover:hover {
+  box-shadow: var(--shadow-lg);
+  border-color: var(--gold-light);
+  transform: translateY(-2px);
+}
 
+/* ── Buttons ─────────────────────────────────────────────────── */
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-  padding: 10px 22px; border-radius: 8px; font-weight: 600; font-size: 14px;
-  cursor: pointer; border: none; transition: opacity .15s, transform .1s; text-decoration: none;
-  font-family: var(--font-heading);
-  letter-spacing: -0.01em;
+  padding: 10px 22px; border-radius: 8px; font-weight: 600; font-size: 13px;
+  cursor: pointer; border: none; text-decoration: none;
+  font-family: var(--font-body);
+  letter-spacing: 0.02em;
+  transition: opacity .15s, transform .1s, box-shadow .15s;
 }
 .btn:active { transform: scale(.98); }
-.btn-primary { background: var(--text); color: var(--bg); }
-.btn-primary:hover { opacity: .85; }
-.btn-outline { background: transparent; color: var(--text); border: 1.5px solid var(--border-2); }
-.btn-outline:hover { border-color: var(--text); }
-.btn-ghost { background: transparent; color: var(--muted); padding: 8px 12px; }
-.btn-ghost:hover { background: var(--surface-2); color: var(--text); }
 
+/* Primary: gold fill, cream text */
+.btn-primary {
+  background: var(--gold);
+  color: #F5F0E8;
+}
+.btn-primary:hover {
+  opacity: .9;
+  box-shadow: 0 4px 12px rgba(160, 114, 42, 0.25);
+}
+
+/* Secondary: cream fill, gold border, gold text */
+.btn-outline {
+  background: var(--surface);
+  color: var(--gold);
+  border: 1.5px solid var(--gold);
+}
+.btn-outline:hover {
+  background: rgba(160, 114, 42, 0.06);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--muted);
+  padding: 8px 12px;
+}
+.btn-ghost:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+/* ── Badges ──────────────────────────────────────────────────── */
 .badge {
   display: inline-flex; align-items: center;
   padding: 3px 10px; border-radius: 99px;
-  font-size: 11px; font-weight: 600; letter-spacing: .02em;
-  font-family: var(--font-heading);
+  font-size: 11px; font-weight: 500; letter-spacing: 0.04em;
+  font-family: var(--font-body);
 }
-.badge-dark   { background: var(--accent-bg); color: var(--text); border: 1px solid var(--border); }
-.badge-green  { background: #E8F5E9; color: #2E7D32; }
-.badge-purple { background: #EDE7F6; color: #5E35B1; }
-.badge-yellow { background: #FFF8E1; color: #F57F17; }
-.badge-red    { background: #FFEBEE; color: #C62828; }
-.badge-gray   { background: var(--surface-2); color: var(--muted); }
+.badge-dark {
+  background: rgba(160, 114, 42, 0.08);
+  color: var(--gold);
+  border: 1px solid rgba(160, 114, 42, 0.2);
+}
+.badge-green {
+  background: rgba(160, 114, 42, 0.1);
+  color: #7A6020;
+  border: 1px solid rgba(160, 114, 42, 0.15);
+}
+.badge-purple {
+  background: rgba(160, 114, 42, 0.06);
+  color: var(--muted);
+  border: 1px solid var(--border);
+}
+.badge-yellow {
+  background: rgba(201, 165, 90, 0.15);
+  color: #7A6020;
+  border: 1px solid rgba(201, 165, 90, 0.25);
+}
+.badge-red {
+  background: rgba(160, 80, 42, 0.08);
+  color: #8B4513;
+  border: 1px solid rgba(160, 80, 42, 0.15);
+}
+.badge-gray {
+  background: var(--surface-2);
+  color: var(--muted-2);
+  border: 1px solid var(--border);
+}
 
-.dark .badge-green  { background: #1B5E2010; color: #66BB6A; }
-.dark .badge-purple { background: #4527A010; color: #B39DDB; }
-.dark .badge-yellow { background: #F57F1710; color: #FFB74D; }
-.dark .badge-red    { background: #C6282810; color: #EF9A9A; }
+/* ── Reputation bar ──────────────────────────────────────────── */
+.rep-bar {
+  height: 5px;
+  background: var(--border);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.rep-fill {
+  height: 100%;
+  background: var(--gold);
+  border-radius: 99px;
+  transition: width .4s;
+}
 
-.rep-bar  { height: 5px; background: var(--surface-2); border-radius: 99px; overflow: hidden; }
-.rep-fill { height: 100%; background: var(--text); border-radius: 99px; transition: width .4s; }
-
+/* ── Forms ────────────────────────────────────────────────────── */
 input, textarea, select {
-  background: var(--surface); border: 1.5px solid var(--border); border-radius: 8px;
-  padding: 10px 14px; font-size: 14px; color: var(--text); width: 100%;
-  transition: border-color .15s; font-family: var(--font-body);
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 14px;
+  color: var(--text);
+  width: 100%;
+  font-family: var(--font-body);
+  transition: border-color .15s, box-shadow .15s;
 }
 input:focus, textarea:focus, select:focus {
-  outline: none; border-color: var(--text); box-shadow: 0 0 0 3px var(--accent-bg);
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(160, 114, 42, 0.1);
+}
+input::placeholder, textarea::placeholder {
+  color: var(--muted-2);
 }
 
-/* ── Responsive Navigation ───────────────────────────────── */
-
-/* Desktop: show nav links and wallet, hide hamburger */
+/* ── Responsive Navigation ───────────────────────────────────── */
 .nav-desktop { display: flex; align-items: center; }
 .nav-hamburger { display: none !important; }
 
-/* Mobile: hide nav links and wallet, show hamburger */
 @media (max-width: 768px) {
   .nav-desktop { display: none !important; }
   .nav-hamburger { display: flex !important; }
-
-  /* Prevent body scroll when mobile menu is open */
   body.menu-open { overflow: hidden; }
 }
 
-/* ── Responsive page content ─────────────────────────────── */
-@media (max-width: 768px) {
-  section { padding-left: 16px !important; padding-right: 16px !important; }
-}
-
-/* ── Layer stack cards — responsive ──────────────────────── */
+/* ── Layer stack cards ───────────────────────────────────────── */
 .layer-card {
   display: grid;
   grid-template-columns: 40px 1fr auto;
@@ -163,8 +222,6 @@ input:focus, textarea:focus, select:focus {
   padding: 20px 24px;
   cursor: pointer;
 }
-
-/* Desktop: address in side column */
 .layer-addr-mobile { display: none; }
 
 @media (max-width: 768px) {
@@ -173,81 +230,54 @@ input:focus, textarea:focus, select:focus {
     gap: 12px 14px;
     padding: 16px 18px;
   }
-
-  /* Hide the side-column address on mobile */
   .layer-addr-desktop { display: none !important; }
-
-  /* Show address below description on mobile */
-  .layer-addr-mobile {
-    display: inline-block !important;
-    margin-top: 8px;
-  }
+  .layer-addr-mobile { display: inline-block !important; margin-top: 8px; }
 }
 
-/* ── Utility — font overrides for inline styles ──────────── */
-nav a { font-family: var(--font-heading) !important; }
-
-/* ═══════════════════════════════════════════════════════════
-   MOBILE RESPONSIVE — Inner Pages
-   Targets common inline style patterns across all pages
-   without requiring individual page file edits.
-   ═══════════════════════════════════════════════════════════ */
-
+/* ── Mobile responsive — inner pages ─────────────────────────── */
 @media (max-width: 768px) {
+  section { padding-left: 16px !important; padding-right: 16px !important; }
 
-  /* ── Containers: tighter horizontal padding ──────────────── */
   main > div[style] {
     padding-left: 16px !important;
     padding-right: 16px !important;
     padding-top: 24px !important;
   }
 
-  /* ── Page headers: stack title + button vertically ────────── */
-  /* All pages use: display:flex, justifyContent:space-between */
   main > div > div[style*="space-between"] {
     flex-wrap: wrap !important;
     gap: 12px !important;
   }
 
-  /* ── Info grids: 3-column → 1-column on mobile ──────────── */
-  /* Detail pages use: gridTemplateColumns: repeat(3, 1fr) */
   [style*="repeat(3, 1fr)"] {
     grid-template-columns: 1fr !important;
     gap: 12px !important;
   }
 
-  /* ── Form grids: 2-column → 1-column on mobile ─────────── */
-  /* Form pages use: gridTemplateColumns: 1fr 1fr */
   [style*="grid-template-columns: 1fr 1fr"],
   [style*="grid-template-columns:1fr 1fr"] {
     grid-template-columns: 1fr !important;
   }
 
-  /* ── Card grids: full-width single column on small screens ─ */
-  [style*="minmax(320px"] {
-    grid-template-columns: 1fr !important;
-  }
+  [style*="minmax(320px"] { grid-template-columns: 1fr !important; }
+  [style*="minmax(280px"] { grid-template-columns: 1fr !important; }
+  [style*="minmax(260px"] { grid-template-columns: 1fr !important; }
+  [style*="minmax(140px"] { grid-template-columns: repeat(2, 1fr) !important; gap: 20px !important; }
+  [style*="minmax(180px"] { grid-template-columns: repeat(2, 1fr) !important; }
 
-  /* ── Monospace addresses: allow wrapping ─────────────────── */
   [style*="JetBrains Mono"],
+  [style*="IBM Plex Mono"],
   [style*="monospace"] {
     word-break: break-all !important;
     white-space: normal !important;
     overflow-wrap: break-word !important;
   }
 
-  /* ── Card padding: slightly tighter on mobile ──────────── */
   .card[style*="padding: 28px"],
   .card[style*="padding:28px"] {
     padding: 20px !important;
   }
 
-  /* ── Hero heading: smaller on mobile ────────────────────── */
-  h1[style*="clamp(38px"] {
-    font-size: clamp(32px, 8vw, 48px) !important;
-  }
-
-  /* ── Footer: stack links vertically ─────────────────────── */
   footer > div[style] {
     flex-direction: column !important;
     align-items: flex-start !important;
@@ -258,25 +288,7 @@ nav a { font-family: var(--font-heading) !important; }
     flex-wrap: wrap !important;
     gap: 12px !important;
   }
-
-  /* ── Buttons: full-width on very small screens ─────────── */
-  .btn {
-    font-size: 13px;
-  }
-
-  /* ── Stats bar: 2 columns instead of 5 ─────────────────── */
-  [style*="minmax(140px"] {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 20px !important;
-  }
-
-  /* ── Repo grid: single column ──────────────────────────── */
-  [style*="minmax(260px"] {
-    grid-template-columns: 1fr !important;
-  }
-
-  /* ── Flow/step cards: 2 columns instead of 5 ──────────── */
-  [style*="minmax(180px"] {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
 }
+
+/* ── Utility ─────────────────────────────────────────────────── */
+nav a { font-family: var(--font-body) !important; }

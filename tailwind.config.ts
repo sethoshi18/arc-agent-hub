@@ -6,13 +6,12 @@ const config: Config = {
     "./components/**/*.{ts,tsx}",
     "./lib/**/*.{ts,tsx}",
   ],
-  darkMode: "class",
   theme: {
     extend: {
       fontFamily: {
-        display: ["Manrope", "system-ui", "sans-serif"],
-        body: ["Geist", "system-ui", "sans-serif"],
-        mono: ["JetBrains Mono", "monospace"],
+        display: ["Inter", "system-ui", "sans-serif"],
+        body: ["IBM Plex Mono", "monospace"],
+        mono: ["IBM Plex Mono", "monospace"],
       },
       colors: {
         bg:      "var(--bg)",
@@ -20,6 +19,7 @@ const config: Config = {
         border:  "var(--border)",
         muted:   "var(--muted)",
         accent:  "var(--accent)",
+        gold:    "var(--gold)",
       },
     },
   },
