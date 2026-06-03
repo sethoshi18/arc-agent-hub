@@ -3,6 +3,9 @@ export const CONTRACTS = {
   agentJob:      (process.env.NEXT_PUBLIC_AGENT_JOB_ADDRESS      ?? "0xD698d15F776279c0213444a779941e8E0Cbe5094") as `0x${string}`,
   agentMarket:   (process.env.NEXT_PUBLIC_AGENT_MARKET_ADDRESS   ?? "0x6BAf93EB026b7BC3db651065302D1934Ad577ec1") as `0x${string}`,
   agentOrchestrator: (process.env.NEXT_PUBLIC_AGENT_ORCHESTRATOR_ADDRESS ?? "0xbA99f039b7892d9F546253444c95EDea822471b0") as `0x${string}`,
+  agentRetainer: (process.env.NEXT_PUBLIC_AGENT_RETAINER_ADDRESS ?? "0x5C80B95Ac3c2eE748F427aBB15Ad5d3E94fcD8D6") as `0x${string}`,
+  agentStaking:  (process.env.NEXT_PUBLIC_AGENT_STAKING_ADDRESS  ?? "0x0107BD44E269888F12dCc32E9bc03E79Ca7Be770") as `0x${string}`,
+  agentDAO:      (process.env.NEXT_PUBLIC_AGENT_DAO_ADDRESS      ?? "0x213157853e67BC17F4b69B8F3f5b0fe14C64fCf7") as `0x${string}`,
   usdc:          (process.env.NEXT_PUBLIC_USDC_ADDRESS           ?? "0x3600000000000000000000000000000000000000") as `0x${string}`,
 } as const;
 
@@ -55,11 +58,54 @@ export const ERC20_ABI = [
   { name: "balanceOf", type: "function", stateMutability: "view", inputs: [{ name: "account", type: "address" }], outputs: [{ name: "", type: "uint256" }] },
 ] as const;
 
+export const RETAINER_ABI = [
+  { name: "createPlan", type: "function", stateMutability: "nonpayable", inputs: [{ name: "agentTokenId", type: "uint256" }, { name: "priceUsdc", type: "uint256" }, { name: "intervalSeconds", type: "uint256" }, { name: "description", type: "string" }], outputs: [{ name: "planId", type: "uint256" }] },
+  { name: "updatePlan", type: "function", stateMutability: "nonpayable", inputs: [{ name: "planId", type: "uint256" }, { name: "newPriceUsdc", type: "uint256" }, { name: "newIntervalSeconds", type: "uint256" }], outputs: [] },
+  { name: "deactivatePlan", type: "function", stateMutability: "nonpayable", inputs: [{ name: "planId", type: "uint256" }], outputs: [] },
+  { name: "subscribe", type: "function", stateMutability: "nonpayable", inputs: [{ name: "planId", type: "uint256" }], outputs: [{ name: "subscriptionId", type: "uint256" }] },
+  { name: "cancelSubscription", type: "function", stateMutability: "nonpayable", inputs: [{ name: "subscriptionId", type: "uint256" }], outputs: [] },
+  { name: "charge", type: "function", stateMutability: "nonpayable", inputs: [{ name: "subscriptionId", type: "uint256" }], outputs: [] },
+  { name: "getPlan", type: "function", stateMutability: "view", inputs: [{ name: "planId", type: "uint256" }], outputs: [{ name: "", type: "tuple", components: [{ name: "id", type: "uint256" }, { name: "agentTokenId", type: "uint256" }, { name: "priceUsdc", type: "uint256" }, { name: "intervalSeconds", type: "uint256" }, { name: "description", type: "string" }, { name: "status", type: "uint8" }, { name: "createdAt", type: "uint256" }, { name: "subscriberCount", type: "uint256" }] }] },
+  { name: "getSubscription", type: "function", stateMutability: "view", inputs: [{ name: "subscriptionId", type: "uint256" }], outputs: [{ name: "", type: "tuple", components: [{ name: "id", type: "uint256" }, { name: "planId", type: "uint256" }, { name: "client", type: "address" }, { name: "status", type: "uint8" }, { name: "startedAt", type: "uint256" }, { name: "lastChargedAt", type: "uint256" }, { name: "totalCharged", type: "uint256" }, { name: "cycleCount", type: "uint256" }] }] },
+  { name: "getPlansByAgent", type: "function", stateMutability: "view", inputs: [{ name: "agentTokenId", type: "uint256" }], outputs: [{ name: "", type: "uint256[]" }] },
+  { name: "getSubscriptionsByClient", type: "function", stateMutability: "view", inputs: [{ name: "client", type: "address" }], outputs: [{ name: "", type: "uint256[]" }] },
+  { name: "getSubscriptionsByPlan", type: "function", stateMutability: "view", inputs: [{ name: "planId", type: "uint256" }], outputs: [{ name: "", type: "uint256[]" }] },
+] as const;
+
+export const STAKING_ABI = [
+  { name: "stake", type: "function", stateMutability: "nonpayable", inputs: [{ name: "agentTokenId", type: "uint256" }, { name: "amount", type: "uint256" }], outputs: [] },
+  { name: "requestWithdrawal", type: "function", stateMutability: "nonpayable", inputs: [{ name: "agentTokenId", type: "uint256" }, { name: "amount", type: "uint256" }], outputs: [{ name: "requestId", type: "uint256" }] },
+  { name: "completeWithdrawal", type: "function", stateMutability: "nonpayable", inputs: [{ name: "requestId", type: "uint256" }], outputs: [] },
+  { name: "cancelWithdrawal", type: "function", stateMutability: "nonpayable", inputs: [{ name: "requestId", type: "uint256" }], outputs: [] },
+  { name: "getStake", type: "function", stateMutability: "view", inputs: [{ name: "agentTokenId", type: "uint256" }], outputs: [{ name: "", type: "tuple", components: [{ name: "agentTokenId", type: "uint256" }, { name: "amount", type: "uint256" }, { name: "stakedAt", type: "uint256" }, { name: "slashCount", type: "uint256" }, { name: "active", type: "bool" }] }] },
+  { name: "getWithdrawalRequest", type: "function", stateMutability: "view", inputs: [{ name: "requestId", type: "uint256" }], outputs: [{ name: "", type: "tuple", components: [{ name: "id", type: "uint256" }, { name: "agentTokenId", type: "uint256" }, { name: "amount", type: "uint256" }, { name: "requestedAt", type: "uint256" }, { name: "status", type: "uint8" }] }] },
+  { name: "getWithdrawalsByAgent", type: "function", stateMutability: "view", inputs: [{ name: "agentTokenId", type: "uint256" }], outputs: [{ name: "", type: "uint256[]" }] },
+] as const;
+
+export const DAO_ABI = [
+  { name: "createGovernanceProposal", type: "function", stateMutability: "nonpayable", inputs: [{ name: "agentTokenId", type: "uint256" }, { name: "description", type: "string" }], outputs: [{ name: "proposalId", type: "uint256" }] },
+  { name: "createDisputeProposal", type: "function", stateMutability: "nonpayable", inputs: [{ name: "agentTokenId", type: "uint256" }, { name: "description", type: "string" }, { name: "jobContractType", type: "uint256" }, { name: "jobId", type: "uint256" }, { name: "disputedAgentId", type: "uint256" }, { name: "client", type: "address" }, { name: "escrowAmount", type: "uint256" }], outputs: [{ name: "proposalId", type: "uint256" }] },
+  { name: "vote", type: "function", stateMutability: "nonpayable", inputs: [{ name: "proposalId", type: "uint256" }, { name: "agentTokenId", type: "uint256" }, { name: "choice", type: "uint8" }], outputs: [] },
+  { name: "executeProposal", type: "function", stateMutability: "nonpayable", inputs: [{ name: "proposalId", type: "uint256" }], outputs: [] },
+  { name: "cancelProposal", type: "function", stateMutability: "nonpayable", inputs: [{ name: "proposalId", type: "uint256" }], outputs: [] },
+  { name: "getProposal", type: "function", stateMutability: "view", inputs: [{ name: "proposalId", type: "uint256" }], outputs: [{ name: "", type: "tuple", components: [{ name: "id", type: "uint256" }, { name: "proposerAgentId", type: "uint256" }, { name: "proposalType", type: "uint8" }, { name: "description", type: "string" }, { name: "status", type: "uint8" }, { name: "createdAt", type: "uint256" }, { name: "votingEndsAt", type: "uint256" }, { name: "forVotes", type: "uint256" }, { name: "againstVotes", type: "uint256" }, { name: "abstainVotes", type: "uint256" }, { name: "voterCount", type: "uint256" }, { name: "executed", type: "bool" }] }] },
+  { name: "getDisputeInfo", type: "function", stateMutability: "view", inputs: [{ name: "proposalId", type: "uint256" }], outputs: [{ name: "", type: "tuple", components: [{ name: "jobContractType", type: "uint256" }, { name: "jobId", type: "uint256" }, { name: "disputedAgentId", type: "uint256" }, { name: "client", type: "address" }, { name: "escrowAmount", type: "uint256" }, { name: "outcome", type: "uint8" }] }] },
+  { name: "hasAgentVoted", type: "function", stateMutability: "view", inputs: [{ name: "proposalId", type: "uint256" }, { name: "agentTokenId", type: "uint256" }], outputs: [{ name: "", type: "bool" }] },
+  { name: "getProposalsByAgent", type: "function", stateMutability: "view", inputs: [{ name: "agentTokenId", type: "uint256" }], outputs: [{ name: "", type: "uint256[]" }] },
+] as const;
+
 export const RFP_STATUS: Record<number, string> = { 0: "Open", 1: "Matched", 2: "Cancelled" };
 export const JOB_STATUS: Record<number, string> = { 0: "Open", 1: "Accepted", 2: "Submitted", 3: "Completed", 4: "Disputed", 5: "Cancelled" };
 export const ORCHESTRA_STATUS: Record<number, string> = { 0: "Pending", 1: "Active", 2: "Disbanded" };
 export const ORCH_JOB_STATUS: Record<number, string> = { 0: "Created", 1: "InProgress", 2: "Completed", 3: "Disputed", 4: "Cancelled" };
 export const SUBTASK_STATUS: Record<number, string> = { 0: "Pending", 1: "Submitted", 2: "Approved", 3: "Disputed" };
+
+export const PLAN_STATUS: Record<number, string> = { 0: "Active", 1: "Deactivated" };
+export const SUBSCRIPTION_STATUS: Record<number, string> = { 0: "Active", 1: "Cancelled", 2: "Lapsed" };
+export const WITHDRAWAL_STATUS: Record<number, string> = { 0: "None", 1: "Pending", 2: "Completed", 3: "Cancelled" };
+export const PROPOSAL_TYPE: Record<number, string> = { 0: "Governance", 1: "Dispute" };
+export const PROPOSAL_STATUS: Record<number, string> = { 0: "Active", 1: "Passed", 2: "Failed", 3: "Executed", 4: "Cancelled" };
+export const VOTE_CHOICE: Record<number, string> = { 0: "Against", 1: "For", 2: "Abstain" };
 
 export function formatUsdc(raw: bigint) {
   return (Number(raw) / 1_000_000).toFixed(2);

@@ -33,8 +33,8 @@ export function Nav() {
         </Link>
 
         <nav style={{ display:"flex", gap:2, alignItems:"center" }}>
-          {[["Agents","/agents"],["RFPs","/rfps"],["Orchestras","/orchestras"],["Post RFP","/rfps/new"],["Dashboard","/dashboard"]].map(([l,h]) => (
-            <Link key={h} href={h} style={{ padding:"6px 14px", borderRadius:6, fontSize:13,
+          {[["Agents","/agents"],["RFPs","/rfps"],["Orchestras","/orchestras"],["Retainers","/retainers"],["Staking","/staking"],["DAO","/dao"],["Dashboard","/dashboard"]].map(([l,h]) => (
+            <Link key={h} href={h} style={{ padding:"6px 10px", borderRadius:6, fontSize:13,
               fontWeight:500, color:"var(--muted)", textDecoration:"none", transition:"all .1s" }}
               onMouseOver={e => { (e.currentTarget as HTMLElement).style.color="var(--text)"; (e.currentTarget as HTMLElement).style.background="var(--surface-2)"; }}
               onMouseOut={e => { (e.currentTarget as HTMLElement).style.color="var(--muted)"; (e.currentTarget as HTMLElement).style.background="transparent"; }}>
