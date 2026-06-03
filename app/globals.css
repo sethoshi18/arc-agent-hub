@@ -298,7 +298,11 @@ input::placeholder, textarea::placeholder {
 
   .card[style*="padding: 28px"],
   .card[style*="padding:28px"] {
-    padding: 20px !important;
+    padding: 22px 24px !important;
+  }
+  .card[style*="padding: 20px"],
+  .card[style*="padding:20px"] {
+    padding: 18px 22px !important;
   }
 
   footer > div[style] {
