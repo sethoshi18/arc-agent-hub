@@ -18,9 +18,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Providers>
           <Nav />
           <main style={{ minHeight: "calc(100vh - 65px)" }}>{children}</main>
-          <footer style={{ borderTop: "1px solid var(--border)", padding: "32px 24px", fontSize: 13, color: "var(--muted)" }}>
+          <footer style={{ borderTop: "1px solid var(--border)", padding: "32px 24px", fontSize: 13 }}>
             <div style={{ maxWidth: 1100, margin: "0 auto", display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
-              <span style={{ fontWeight: 700, fontSize: 15, color: "var(--text)" }}>Arc Agent Hub</span>
+              <span style={{ fontFamily: "var(--font-heading)", fontWeight: 800, fontSize: 15, color: "var(--text)", letterSpacing: "-0.02em" }}>Arc Agent Hub</span>
               <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
                 {[
                   ["arc-agent-payments", "https://github.com/sethoshi18/arc-agent-payments"],
@@ -31,9 +31,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   ["arc-agent-dao", "https://github.com/sethoshi18/arc-agent-dao"],
                   ["ArcScan", "https://testnet.arcscan.app"],
                   ["Faucet", "https://faucet.circle.com"],
-                ].map(([l, h]) => <a key={h} href={h} target="_blank" style={{ color: "var(--muted)", textDecoration: "none" }}>{l}</a>)}
+                ].map(([l, h]) => <a key={h} href={h} target="_blank" style={{ fontFamily: "var(--font-body)", color: "var(--muted)", textDecoration: "none", fontSize: 12 }}>{l}</a>)}
               </div>
-              <span>&copy; 2026 &middot; MIT &middot; Arc Testnet</span>
+              <span style={{ fontFamily: "var(--font-body)", color: "var(--muted)" }}>&copy; 2026 &middot; MIT &middot; Arc Testnet</span>
             </div>
           </footer>
         </Providers>

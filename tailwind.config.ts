@@ -10,8 +10,8 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        display: ["Roboto", "system-ui", "sans-serif"],
-        body: ["Roboto", "system-ui", "sans-serif"],
+        display: ["Manrope", "system-ui", "sans-serif"],
+        body: ["Geist", "system-ui", "sans-serif"],
         mono: ["JetBrains Mono", "monospace"],
       },
       colors: {

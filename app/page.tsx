@@ -108,10 +108,11 @@ export default function Home() {
             7 contracts live on Arc Testnet
           </span>
           <h1 style={{
+            fontFamily: "var(--font-heading)",
             fontWeight: 900,
             fontSize: "clamp(38px, 6vw, 72px)",
             lineHeight: 1.05,
-            letterSpacing: "-0.03em",
+            letterSpacing: "-0.04em",
             color: "var(--text)",
             marginBottom: 24,
           }}>
@@ -120,6 +121,7 @@ export default function Home() {
             agent economy.
           </h1>
           <p style={{
+            fontFamily: "var(--font-body)",
             fontSize: 17,
             color: "var(--muted)",
             lineHeight: 1.7,
@@ -145,11 +147,13 @@ export default function Home() {
       <section style={{ padding: "28px 24px", borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)" }}>
         <div style={{ maxWidth: 960, margin: "0 auto", display: "flex", alignItems: "center",
           justifyContent: "center", gap: "clamp(16px, 3vw, 36px)", flexWrap: "wrap" }}>
-          <span style={{ fontSize: 11, color: "var(--muted-2)", textTransform: "uppercase", letterSpacing: ".12em", fontWeight: 500 }}>
+          <span style={{ fontFamily: "var(--font-body)", fontSize: 11, color: "var(--muted-2)",
+            textTransform: "uppercase", letterSpacing: ".12em", fontWeight: 500 }}>
             Built on
           </span>
           {["Arc Network", "Circle", "USDC", "ERC-8004", "ERC-8183", "MCP", "Wagmi"].map((b) => (
-            <span key={b} style={{ fontSize: 13, fontWeight: 500, color: "var(--muted)", letterSpacing: "-0.01em" }}>
+            <span key={b} style={{ fontFamily: "var(--font-heading)", fontSize: 13, fontWeight: 600,
+              color: "var(--muted)", letterSpacing: "-0.01em" }}>
               {b}
             </span>
           ))}
@@ -160,11 +164,13 @@ export default function Home() {
       <section style={{ padding: "88px 24px" }}>
         <div style={{ maxWidth: 1100, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: 56 }}>
-            <h2 style={{ fontWeight: 700, fontSize: "clamp(26px, 4vw, 40px)", color: "var(--text)",
-              letterSpacing: "-0.02em", marginBottom: 12 }}>
+            <h2 style={{ fontFamily: "var(--font-heading)", fontWeight: 700,
+              fontSize: "clamp(26px, 4vw, 40px)", color: "var(--text)",
+              letterSpacing: "-0.03em", marginBottom: 12 }}>
               One stack for agentic commerce
             </h2>
-            <p style={{ color: "var(--muted)", fontSize: 15, maxWidth: 480, margin: "0 auto" }}>
+            <p style={{ fontFamily: "var(--font-body)", color: "var(--muted)", fontSize: 15,
+              maxWidth: 480, margin: "0 auto" }}>
               Seven on-chain layers working together — from identity to governance.
             </p>
           </div>
@@ -172,10 +178,14 @@ export default function Home() {
             {HIGHLIGHTS.map((f) => (
               <div key={f.title} className="card card-hover" style={{ padding: 28 }}>
                 <span className="badge badge-dark" style={{ marginBottom: 16 }}>{f.tag}</span>
-                <p style={{ fontWeight: 700, fontSize: 16, color: "var(--text)", marginBottom: 8, letterSpacing: "-0.01em" }}>
+                <p style={{ fontFamily: "var(--font-heading)", fontWeight: 700, fontSize: 16,
+                  color: "var(--text)", marginBottom: 8, letterSpacing: "-0.02em" }}>
                   {f.title}
                 </p>
-                <p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.65 }}>{f.desc}</p>
+                <p style={{ fontFamily: "var(--font-body)", fontSize: 13, color: "var(--muted)",
+                  lineHeight: 1.65 }}>
+                  {f.desc}
+                </p>
               </div>
             ))}
           </div>
@@ -186,11 +196,13 @@ export default function Home() {
       <section style={{ padding: "88px 24px", background: "var(--bg-warm)" }}>
         <div style={{ maxWidth: 1100, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: 56 }}>
-            <h2 style={{ fontWeight: 700, fontSize: "clamp(26px, 4vw, 40px)", color: "var(--text)",
-              letterSpacing: "-0.02em", marginBottom: 12 }}>
+            <h2 style={{ fontFamily: "var(--font-heading)", fontWeight: 700,
+              fontSize: "clamp(26px, 4vw, 40px)", color: "var(--text)",
+              letterSpacing: "-0.03em", marginBottom: 12 }}>
               Seven layers, all on-chain
             </h2>
-            <p style={{ color: "var(--muted)", fontSize: 15, maxWidth: 500, margin: "0 auto" }}>
+            <p style={{ fontFamily: "var(--font-body)", color: "var(--muted)", fontSize: 15,
+              maxWidth: 500, margin: "0 auto" }}>
               Each contract is deployed, verified, and accessible via MCP tools.
             </p>
           </div>
@@ -206,6 +218,7 @@ export default function Home() {
                   cursor: "pointer",
                 }}>
                   <span style={{
+                    fontFamily: "var(--font-heading)",
                     fontSize: 28, fontWeight: 900, color: "var(--border-2)",
                     lineHeight: 1, textAlign: "center",
                   }}>
@@ -213,12 +226,14 @@ export default function Home() {
                   </span>
                   <div>
                     <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
-                      <span style={{ fontWeight: 700, fontSize: 15, color: "var(--text)", letterSpacing: "-0.01em" }}>
+                      <span style={{ fontFamily: "var(--font-heading)", fontWeight: 700, fontSize: 15,
+                        color: "var(--text)", letterSpacing: "-0.02em" }}>
                         {l.label}
                       </span>
                       <span className="badge badge-dark" style={{ fontSize: 10 }}>{l.category}</span>
                     </div>
-                    <p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.5, margin: 0 }}>
+                    <p style={{ fontFamily: "var(--font-body)", fontSize: 13, color: "var(--muted)",
+                      lineHeight: 1.5, margin: 0 }}>
                       {l.desc}
                     </p>
                   </div>
@@ -227,7 +242,7 @@ export default function Home() {
                     target="_blank"
                     onClick={e => e.stopPropagation()}
                     style={{
-                      fontFamily: "JetBrains Mono, monospace",
+                      fontFamily: "var(--font-mono)",
                       fontSize: 11,
                       color: "var(--muted)",
                       textDecoration: "none",
@@ -247,11 +262,12 @@ export default function Home() {
       <section style={{ padding: "88px 24px" }}>
         <div style={{ maxWidth: 1100, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: 56 }}>
-            <h2 style={{ fontWeight: 700, fontSize: "clamp(26px, 4vw, 40px)", color: "var(--text)",
-              letterSpacing: "-0.02em", marginBottom: 12 }}>
+            <h2 style={{ fontFamily: "var(--font-heading)", fontWeight: 700,
+              fontSize: "clamp(26px, 4vw, 40px)", color: "var(--text)",
+              letterSpacing: "-0.03em", marginBottom: 12 }}>
               How it works
             </h2>
-            <p style={{ color: "var(--muted)", fontSize: 15 }}>
+            <p style={{ fontFamily: "var(--font-body)", color: "var(--muted)", fontSize: 15 }}>
               Five steps from intent to payment, all on-chain.
             </p>
           </div>
@@ -259,15 +275,20 @@ export default function Home() {
             {FLOW.map((s) => (
               <div key={s.n} className="card" style={{ padding: 28 }}>
                 <span style={{
+                  fontFamily: "var(--font-heading)",
                   fontSize: 48, fontWeight: 900, color: "var(--border-2)",
                   display: "block", marginBottom: 12, lineHeight: 1,
                 }}>
                   {s.n}
                 </span>
-                <p style={{ fontWeight: 700, fontSize: 15, color: "var(--text)", marginBottom: 8, letterSpacing: "-0.01em" }}>
+                <p style={{ fontFamily: "var(--font-heading)", fontWeight: 700, fontSize: 15,
+                  color: "var(--text)", marginBottom: 8, letterSpacing: "-0.02em" }}>
                   {s.title}
                 </p>
-                <p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.65 }}>{s.desc}</p>
+                <p style={{ fontFamily: "var(--font-body)", fontSize: 13, color: "var(--muted)",
+                  lineHeight: 1.65 }}>
+                  {s.desc}
+                </p>
               </div>
             ))}
           </div>
@@ -286,10 +307,13 @@ export default function Home() {
             { n: "MIT", label: "Open source" },
           ].map((s) => (
             <div key={s.label}>
-              <p style={{ fontWeight: 900, fontSize: 36, color: "var(--text)", marginBottom: 4, lineHeight: 1, letterSpacing: "-0.02em" }}>
+              <p style={{ fontFamily: "var(--font-heading)", fontWeight: 900, fontSize: 36,
+                color: "var(--text)", marginBottom: 4, lineHeight: 1, letterSpacing: "-0.03em" }}>
                 {s.n}
               </p>
-              <p style={{ fontSize: 12, color: "var(--muted)" }}>{s.label}</p>
+              <p style={{ fontFamily: "var(--font-body)", fontSize: 12, color: "var(--muted)" }}>
+                {s.label}
+              </p>
             </div>
           ))}
         </div>
@@ -299,11 +323,12 @@ export default function Home() {
       <section style={{ padding: "88px 24px" }}>
         <div style={{ maxWidth: 1100, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: 48 }}>
-            <h2 style={{ fontWeight: 700, fontSize: "clamp(26px, 4vw, 40px)", color: "var(--text)",
-              letterSpacing: "-0.02em", marginBottom: 12 }}>
+            <h2 style={{ fontFamily: "var(--font-heading)", fontWeight: 700,
+              fontSize: "clamp(26px, 4vw, 40px)", color: "var(--text)",
+              letterSpacing: "-0.03em", marginBottom: 12 }}>
               Open source, all seven
             </h2>
-            <p style={{ color: "var(--muted)", fontSize: 15 }}>
+            <p style={{ fontFamily: "var(--font-body)", color: "var(--muted)", fontSize: 15 }}>
               Fork any layer. Extend the stack. Deploy your own.
             </p>
           </div>
@@ -320,12 +345,14 @@ export default function Home() {
               <a key={r.name} href={`https://github.com/sethoshi18/${r.name}`} target="_blank"
                 className="card card-hover" style={{ padding: "18px 20px", textDecoration: "none", display: "block", cursor: "pointer" }}>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
-                  <span style={{ fontFamily: "JetBrains Mono, monospace", fontSize: 13, fontWeight: 600, color: "var(--text)" }}>
+                  <span style={{ fontFamily: "var(--font-mono)", fontSize: 13, fontWeight: 600, color: "var(--text)" }}>
                     {r.name}
                   </span>
                   <span className="badge badge-gray" style={{ fontSize: 10 }}>{r.layers}</span>
                 </div>
-                <p style={{ fontSize: 12, color: "var(--muted)", margin: 0 }}>{r.desc}</p>
+                <p style={{ fontFamily: "var(--font-body)", fontSize: 12, color: "var(--muted)", margin: 0 }}>
+                  {r.desc}
+                </p>
               </a>
             ))}
           </div>
@@ -335,11 +362,13 @@ export default function Home() {
       {/* ── CTA ──────────────────────────────────────────────── */}
       <section style={{ padding: "88px 24px", textAlign: "center", background: "var(--bg-warm)" }}>
         <div style={{ maxWidth: 520, margin: "0 auto" }}>
-          <h2 style={{ fontWeight: 700, fontSize: "clamp(26px, 4vw, 38px)", color: "var(--text)",
-            letterSpacing: "-0.02em", marginBottom: 16, lineHeight: 1.15 }}>
+          <h2 style={{ fontFamily: "var(--font-heading)", fontWeight: 700,
+            fontSize: "clamp(26px, 4vw, 38px)", color: "var(--text)",
+            letterSpacing: "-0.03em", marginBottom: 16, lineHeight: 1.15 }}>
             Build on Arc
           </h2>
-          <p style={{ color: "var(--muted)", fontSize: 15, lineHeight: 1.7, marginBottom: 36 }}>
+          <p style={{ fontFamily: "var(--font-body)", color: "var(--muted)", fontSize: 15,
+            lineHeight: 1.7, marginBottom: 36 }}>
             Seven contracts. 57 MCP tools. Seven open repos.
             The full stack for autonomous AI agent commerce.
           </p>

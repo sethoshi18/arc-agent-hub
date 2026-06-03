@@ -27,15 +27,16 @@ export function Nav() {
       <div style={{ maxWidth:1100, margin:"0 auto", padding:"0 24px", height:"100%",
         display:"flex", alignItems:"center", justifyContent:"space-between", gap:16 }}>
 
-        <Link href="/" style={{ fontWeight:700, fontSize:16, letterSpacing:"-0.01em",
-          color:"var(--text)", textDecoration:"none", whiteSpace:"nowrap" }}>
+        <Link href="/" style={{ fontFamily:"var(--font-heading)", fontWeight:800, fontSize:16,
+          letterSpacing:"-0.02em", color:"var(--text)", textDecoration:"none", whiteSpace:"nowrap" }}>
           Arc Agent Hub
         </Link>
 
         <nav style={{ display:"flex", gap:2, alignItems:"center" }}>
           {[["Agents","/agents"],["RFPs","/rfps"],["Orchestras","/orchestras"],["Retainers","/retainers"],["Staking","/staking"],["DAO","/dao"],["Dashboard","/dashboard"]].map(([l,h]) => (
-            <Link key={h} href={h} style={{ padding:"6px 10px", borderRadius:6, fontSize:13,
-              fontWeight:500, color:"var(--muted)", textDecoration:"none", transition:"all .1s" }}
+            <Link key={h} href={h} style={{ padding:"6px 10px", borderRadius:6, fontSize:12.5,
+              fontFamily:"var(--font-heading)", fontWeight:500, color:"var(--muted)",
+              textDecoration:"none", transition:"all .1s", letterSpacing:"-0.01em" }}
               onMouseOver={e => { (e.currentTarget as HTMLElement).style.color="var(--text)"; (e.currentTarget as HTMLElement).style.background="var(--surface-2)"; }}
               onMouseOut={e => { (e.currentTarget as HTMLElement).style.color="var(--muted)"; (e.currentTarget as HTMLElement).style.background="transparent"; }}>
               {l}
