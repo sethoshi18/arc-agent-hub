@@ -54,13 +54,14 @@
 
 /* ── Base ────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; overflow-x: hidden; }
 body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   transition: background .2s, color .2s;
+  overflow-x: hidden;
 }
 
 /* Manrope — brand headings, UI controls, technical labels */
@@ -131,6 +132,30 @@ input, textarea, select {
 }
 input:focus, textarea:focus, select:focus {
   outline: none; border-color: var(--text); box-shadow: 0 0 0 3px var(--accent-bg);
+}
+
+/* ── Responsive Navigation ───────────────────────────────── */
+
+/* Desktop: show nav links and wallet, hide hamburger */
+.nav-desktop { display: flex; align-items: center; }
+.nav-hamburger { display: none !important; }
+
+/* Mobile: hide nav links and wallet, show hamburger */
+@media (max-width: 768px) {
+  .nav-desktop { display: none !important; }
+  .nav-hamburger { display: flex !important; }
+
+  /* Prevent body scroll when mobile menu is open */
+  body.menu-open { overflow: hidden; }
+}
+
+/* ── Responsive page content ─────────────────────────────── */
+@media (max-width: 768px) {
+  /* Stack header actions vertically on inner pages */
+  section { padding-left: 16px !important; padding-right: 16px !important; }
+
+  /* 7-layer stack: hide address column on mobile */
+  .layer-address { display: none; }
 }
 
 /* ── Utility — font overrides for inline styles ──────────── */
