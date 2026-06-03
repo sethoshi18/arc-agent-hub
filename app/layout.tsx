@@ -25,6 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 {[
                   ["arc-agent-payments", "https://github.com/sethoshi18/arc-agent-payments"],
                   ["arc-agent-market", "https://github.com/sethoshi18/arc-agent-market"],
+                  ["arc-agent-orchestrator", "https://github.com/sethoshi18/arc-agent-orchestrator"],
                   ["ArcScan", "https://testnet.arcscan.app"],
                   ["Faucet", "https://faucet.circle.com"],
                 ].map(([l, h]) => <a key={h} href={h} target="_blank" style={{ color: "var(--muted)", textDecoration: "none" }}>{l}</a>)}

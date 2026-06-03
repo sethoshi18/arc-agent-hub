@@ -33,7 +33,7 @@ export function Nav() {
         </Link>
 
         <nav style={{ display:"flex", gap:2, alignItems:"center" }}>
-          {[["Agents","/agents"],["RFPs","/rfps"],["Post RFP","/rfps/new"],["Dashboard","/dashboard"]].map(([l,h]) => (
+          {[["Agents","/agents"],["RFPs","/rfps"],["Orchestras","/orchestras"],["Post RFP","/rfps/new"],["Dashboard","/dashboard"]].map(([l,h]) => (
             <Link key={h} href={h} style={{ padding:"6px 14px", borderRadius:6, fontSize:13,
               fontWeight:500, color:"var(--muted)", textDecoration:"none", transition:"all .1s" }}
               onMouseOver={e => { (e.currentTarget as HTMLElement).style.color="var(--text)"; (e.currentTarget as HTMLElement).style.background="var(--surface-2)"; }}
