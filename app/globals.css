@@ -151,11 +151,37 @@ input:focus, textarea:focus, select:focus {
 
 /* ── Responsive page content ─────────────────────────────── */
 @media (max-width: 768px) {
-  /* Stack header actions vertically on inner pages */
   section { padding-left: 16px !important; padding-right: 16px !important; }
+}
 
-  /* 7-layer stack: hide address column on mobile */
-  .layer-address { display: none; }
+/* ── Layer stack cards — responsive ──────────────────────── */
+.layer-card {
+  display: grid;
+  grid-template-columns: 40px 1fr auto;
+  gap: 20px;
+  align-items: center;
+  padding: 20px 24px;
+  cursor: pointer;
+}
+
+/* Desktop: address in side column */
+.layer-addr-mobile { display: none; }
+
+@media (max-width: 768px) {
+  .layer-card {
+    grid-template-columns: 36px 1fr;
+    gap: 12px 14px;
+    padding: 16px 18px;
+  }
+
+  /* Hide the side-column address on mobile */
+  .layer-addr-desktop { display: none !important; }
+
+  /* Show address below description on mobile */
+  .layer-addr-mobile {
+    display: inline-block !important;
+    margin-top: 8px;
+  }
 }
 
 /* ── Utility — font overrides for inline styles ──────────── */

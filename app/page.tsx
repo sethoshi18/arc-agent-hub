@@ -209,14 +209,7 @@ export default function Home() {
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             {LAYERS.map((l) => (
               <Link key={l.n} href={l.href} style={{ textDecoration: "none" }}>
-                <div className="card card-hover" style={{
-                  padding: "20px 24px",
-                  display: "grid",
-                  gridTemplateColumns: "40px 1fr auto",
-                  gap: 20,
-                  alignItems: "center",
-                  cursor: "pointer",
-                }}>
+                <div className="card card-hover layer-card">
                   <span style={{
                     fontFamily: "var(--font-heading)",
                     fontSize: 28, fontWeight: 900, color: "var(--border-2)",
@@ -225,7 +218,7 @@ export default function Home() {
                     {l.n}
                   </span>
                   <div>
-                    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4, flexWrap: "wrap" }}>
                       <span style={{ fontFamily: "var(--font-heading)", fontWeight: 700, fontSize: 15,
                         color: "var(--text)", letterSpacing: "-0.02em" }}>
                         {l.label}
@@ -236,16 +229,27 @@ export default function Home() {
                       lineHeight: 1.5, margin: 0 }}>
                       {l.desc}
                     </p>
+                    {/* Mobile-only address — shown below description */}
+                    <a className="layer-addr-mobile"
+                      href={`https://testnet.arcscan.app/address/${l.address}`}
+                      target="_blank"
+                      onClick={e => e.stopPropagation()}
+                      style={{
+                        fontFamily: "var(--font-mono)", fontSize: 11,
+                        color: "var(--muted)", textDecoration: "none",
+                      }}
+                    >
+                      {l.address.slice(0, 6)}...{l.address.slice(-4)} ↗
+                    </a>
                   </div>
-                  <a
+                  {/* Desktop-only address — in side column */}
+                  <a className="layer-addr-desktop"
                     href={`https://testnet.arcscan.app/address/${l.address}`}
                     target="_blank"
                     onClick={e => e.stopPropagation()}
                     style={{
-                      fontFamily: "var(--font-mono)",
-                      fontSize: 11,
-                      color: "var(--muted)",
-                      textDecoration: "none",
+                      fontFamily: "var(--font-mono)", fontSize: 11,
+                      color: "var(--muted)", textDecoration: "none",
                       whiteSpace: "nowrap",
                     }}
                   >
