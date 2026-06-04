@@ -1,6 +1,151 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useRef } from "react";
+
+/* ═══════════════════════════════════════════════════════════════
+   NOISE GRADIENT BACKGROUND
+   Slow-breathing organic color field — aurora through frosted glass.
+   Pure vanilla Canvas, zero dependencies, 1/6 resolution upscaled.
+   ═══════════════════════════════════════════════════════════════ */
+
+const PALETTE: [number, number, number][] = [
+  [245, 235, 210], // warm cream (dominant)
+  [180, 210, 240], // soft blue
+  [190, 170, 230], // soft violet
+  [210, 235, 210], // soft mint
+  [240, 210, 180], // warm apricot
+];
+
+function lerpColor(
+  a: [number, number, number],
+  b: [number, number, number],
+  t: number,
+): [number, number, number] {
+  return [
+    a[0] + (b[0] - a[0]) * t,
+    a[1] + (b[1] - a[1]) * t,
+    a[2] + (b[2] - a[2]) * t,
+  ];
+}
+
+function paletteAt(v: number): [number, number, number] {
+  const clamped = Math.max(0, Math.min(1, v));
+  const seg = clamped * (PALETTE.length - 1);
+  const i = Math.floor(seg);
+  const t = seg - i;
+  if (i >= PALETTE.length - 1) return PALETTE[PALETTE.length - 1];
+  return lerpColor(PALETTE[i], PALETTE[i + 1], t);
+}
+
+/** Layered sine pseudo-noise — 5 octaves, two passes blended */
+function noise2d(x: number, y: number, time: number): number {
+  // Pass 1: large-scale slow drift
+  let v1 = 0;
+  v1 += Math.sin(x * 1.2 + time * 0.7) * 0.30;
+  v1 += Math.sin(y * 1.5 + time * 0.5) * 0.25;
+  v1 += Math.sin((x + y) * 0.9 + time * 0.9) * 0.20;
+  v1 += Math.sin(x * 2.1 - y * 1.8 + time * 0.6) * 0.15;
+  v1 += Math.sin(y * 2.8 + x * 0.7 + time * 1.1) * 0.10;
+
+  // Pass 2: smaller-scale, offset phase — breaks periodicity
+  let v2 = 0;
+  v2 += Math.sin(x * 2.5 + time * 1.3 + 2.0) * 0.25;
+  v2 += Math.sin(y * 3.0 + time * 0.8 + 4.0) * 0.25;
+  v2 += Math.sin((x - y) * 1.7 + time * 1.0 + 1.5) * 0.20;
+  v2 += Math.sin(x * 0.8 + y * 2.2 + time * 1.4 + 3.0) * 0.15;
+  v2 += Math.sin(y * 1.3 - x * 2.9 + time * 0.7 + 5.0) * 0.15;
+
+  // Blend both passes
+  const blended = v1 * 0.55 + v2 * 0.45;
+  // Normalize from [-1,1] to [0,1]
+  return blended * 0.5 + 0.5;
+}
+
+function NoiseBackground() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d", { alpha: false });
+    if (!ctx) return;
+
+    const SCALE = 6; // render at 1/6 resolution
+    let offscreen: HTMLCanvasElement;
+    let offCtx: CanvasRenderingContext2D;
+    let imgData: ImageData;
+    let ow = 0, oh = 0;
+    let time = 0;
+    let animId = 0;
+
+    function resize() {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      canvas!.width = w;
+      canvas!.height = h;
+      ow = Math.ceil(w / SCALE);
+      oh = Math.ceil(h / SCALE);
+
+      offscreen = document.createElement("canvas");
+      offscreen.width = ow;
+      offscreen.height = oh;
+      offCtx = offscreen.getContext("2d", { alpha: false })!;
+      imgData = offCtx.createImageData(ow, oh);
+    }
+
+    function render() {
+      const data = imgData.data;
+      for (let y = 0; y < oh; y++) {
+        const ny = y / oh;
+        for (let x = 0; x < ow; x++) {
+          const nx = x / ow;
+          const v = noise2d(nx * 4.0, ny * 4.0, time);
+          const [r, g, b] = paletteAt(v);
+          const i = (y * ow + x) * 4;
+          data[i] = r;
+          data[i + 1] = g;
+          data[i + 2] = b;
+          data[i + 3] = 255;
+        }
+      }
+      offCtx.putImageData(imgData, 0, 0);
+
+      // Upscale with smooth interpolation
+      ctx!.imageSmoothingEnabled = true;
+      ctx!.imageSmoothingQuality = "high";
+      ctx!.drawImage(offscreen, 0, 0, canvas!.width, canvas!.height);
+
+      time += 0.004;
+      animId = requestAnimationFrame(render);
+    }
+
+    resize();
+    render();
+    window.addEventListener("resize", resize);
+
+    return () => {
+      cancelAnimationFrame(animId);
+      window.removeEventListener("resize", resize);
+    };
+  }, []);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        zIndex: -1,
+        pointerEvents: "none",
+      }}
+    />
+  );
+}
 
 /* ═══════════════════════════════════════════════════════════════
    DATA
@@ -67,7 +212,8 @@ const BUILT_ON = [
 
 export default function HomePage() {
   return (
-    <main style={{ background: "#F5F0E8", minHeight: "100vh" }}>
+    <main style={{ minHeight: "100vh", position: "relative" }}>
+      <NoiseBackground />
 
       {/* ── 1. HERO ────────────────────────────────────────────── */}
       <section
