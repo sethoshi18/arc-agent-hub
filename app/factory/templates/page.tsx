@@ -32,6 +32,7 @@ function TemplateCard({ id }: { id: bigint }) {
     writeContract({
       address: FACTORY_ADDRESS, abi: FACTORY_ABI, functionName: "deployFromTemplate",
       args: [id, name.trim(), "", false, false, false],
+      gas: BigInt(1_000_000),
     });
   }
 

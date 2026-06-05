@@ -59,22 +59,25 @@ function DeployForm() {
 
   function handleDeploy() {
     if (!name.trim()) return;
+    const uri = metadataURI.trim() || `ipfs://${name.trim().replace(/\s+/g, "-").toLowerCase()}`;
+    // Pass struct as positional tuple to match Circle passkey wallet expectations
     writeContract({
       address: FACTORY_ADDRESS, abi: FACTORY_ABI, functionName: "deployAgent",
-      args: [{
-        name: name.trim(),
-        metadataURI: metadataURI.trim() || `ipfs://${name.trim().replace(/\s+/g, "-").toLowerCase()}`,
-        listOnMarket: false,
-        hourlyRateUsdc: 0n,
-        capabilities: [],
-        availableUntil: 0n,
-        createRetainerPlan: false,
-        retainerPriceUsdc: 0n,
-        retainerInterval: 0n,
-        retainerDescription: "",
-        stakeCollateral: false,
-        stakeAmountUsdc: 0n,
-      }],
+      args: [[
+        name.trim(),           // name
+        uri,                   // metadataURI
+        false,                 // listOnMarket
+        BigInt(0),             // hourlyRateUsdc
+        [] as `0x${string}`[], // capabilities (bytes32[])
+        BigInt(0),             // availableUntil
+        false,                 // createRetainerPlan
+        BigInt(0),             // retainerPriceUsdc
+        BigInt(0),             // retainerInterval
+        "",                    // retainerDescription
+        false,                 // stakeCollateral
+        BigInt(0),             // stakeAmountUsdc
+      ]],
+      gas: BigInt(1_000_000),
     });
     setSubmitted(true);
   }
