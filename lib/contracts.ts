@@ -1,11 +1,11 @@
 export const CONTRACTS = {
-  agentIdentity: (process.env.NEXT_PUBLIC_AGENT_IDENTITY_ADDRESS ?? "0x5Bef356f89425823FC7eebB3A6ED1A678F3b8233") as `0x${string}`,
-  agentJob:      (process.env.NEXT_PUBLIC_AGENT_JOB_ADDRESS      ?? "0xD698d15F776279c0213444a779941e8E0Cbe5094") as `0x${string}`,
-  agentMarket:   (process.env.NEXT_PUBLIC_AGENT_MARKET_ADDRESS   ?? "0x6BAf93EB026b7BC3db651065302D1934Ad577ec1") as `0x${string}`,
-  agentOrchestrator: (process.env.NEXT_PUBLIC_AGENT_ORCHESTRATOR_ADDRESS ?? "0xbA99f039b7892d9F546253444c95EDea822471b0") as `0x${string}`,
-  agentRetainer: (process.env.NEXT_PUBLIC_AGENT_RETAINER_ADDRESS ?? "0x5C80B95Ac3c2eE748F427aBB15Ad5d3E94fcD8D6") as `0x${string}`,
-  agentStaking:  (process.env.NEXT_PUBLIC_AGENT_STAKING_ADDRESS  ?? "0x0107BD44E269888F12dCc32E9bc03E79Ca7Be770") as `0x${string}`,
-  agentDAO:      (process.env.NEXT_PUBLIC_AGENT_DAO_ADDRESS      ?? "0x213157853e67BC17F4b69B8F3f5b0fe14C64fCf7") as `0x${string}`,
+  agentIdentity: (process.env.NEXT_PUBLIC_AGENT_IDENTITY_ADDRESS ?? "0x0bf50994245ab3297ed95665d62192977930fabb") as `0x${string}`,
+  agentJob:      (process.env.NEXT_PUBLIC_AGENT_JOB_ADDRESS      ?? "0x2747fc4601933c7bdfeaddf52808a1c0bedc2323") as `0x${string}`,
+  agentMarket:   (process.env.NEXT_PUBLIC_AGENT_MARKET_ADDRESS   ?? "0x79718fbd092276124d5bfed596e91f861d78a547") as `0x${string}`,
+  agentOrchestrator: (process.env.NEXT_PUBLIC_AGENT_ORCHESTRATOR_ADDRESS ?? "0x925a80a447dddb7726a24fabc07fd22b76c4e7c1") as `0x${string}`,
+  agentRetainer: (process.env.NEXT_PUBLIC_AGENT_RETAINER_ADDRESS ?? "0x9ca8bf8a090a2607d14e6cb0228e02ebd3d3329d") as `0x${string}`,
+  agentStaking:  (process.env.NEXT_PUBLIC_AGENT_STAKING_ADDRESS  ?? "0xbbab7b7ed776e169eb6f0284d97f03cef3c5ecef") as `0x${string}`,
+  agentDAO:      (process.env.NEXT_PUBLIC_AGENT_DAO_ADDRESS      ?? "0x256658aa7be4e4a066d002f9fecd8e60f8efcbb7") as `0x${string}`,
   usdc:          (process.env.NEXT_PUBLIC_USDC_ADDRESS           ?? "0x3600000000000000000000000000000000000000") as `0x${string}`,
 } as const;
 

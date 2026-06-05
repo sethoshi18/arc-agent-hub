@@ -1,11 +1,11 @@
 /**
  * AgentFactory (Layer 8) — Contract config + ABI for the Arc Agent Hub frontend.
- * Factory V2: 0xbffff5f60851fc4eb51c0876fe76165a5d9a3f88
+ * Factory V2: 0x1e2e8abfa05b0df0c83af5de3580a79f6c7f6398
  * Identity V2: 0x0bf50994245ab3297ed95665d62192977930fabb
  */
 
 export const FACTORY_ADDRESS = (process.env.NEXT_PUBLIC_AGENT_FACTORY_ADDRESS ??
-  "0xbffff5f60851fc4eb51c0876fe76165a5d9a3f88") as `0x${string}`;
+  "0x1e2e8abfa05b0df0c83af5de3580a79f6c7f6398") as `0x${string}`;
 
 export const IDENTITY_V2_ADDRESS = (process.env.NEXT_PUBLIC_AGENT_IDENTITY_V2_ADDRESS ??
   "0x0bf50994245ab3297ed95665d62192977930fabb") as `0x${string}`;
