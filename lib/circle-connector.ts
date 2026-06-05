@@ -85,6 +85,10 @@ export function circlePasskey({ clientUrl, clientKey }: CirclePasskeyParams) {
       account: circleAccount,
       chain,
       transport: modularTransport,
+      // Enable Circle Gas Station paymaster — sponsors gas for UserOperations
+      // so the SCA doesn't need USDC balance for gas. Circle's modular transport
+      // handles pm_getPaymasterStubData and pm_getPaymasterData automatically.
+      paymaster: true,
     });
 
     smartAccountAddress = circleAccount.address;

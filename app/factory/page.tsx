@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
-import { useReadContract, useSendTransaction, useAccount, useWaitForTransactionReceipt } from "wagmi";
-import { encodeFunctionData } from "viem";
+import { useReadContract, useWriteContract, useAccount, useWaitForTransactionReceipt } from "wagmi";
 import Link from "next/link";
 import { FACTORY_ADDRESS, FACTORY_ABI, formatUsdc, shortAddr } from "@/lib/factory";
 
@@ -54,38 +53,28 @@ function DeployForm() {
   const [metadataURI, setMetadataURI] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
-  const { sendTransaction, data: txHash, isPending, error } = useSendTransaction();
+  const { writeContract, data: txHash, isPending, error } = useWriteContract();
   const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({ hash: txHash });
 
   function handleDeploy() {
     if (!name.trim()) return;
     const uri = metadataURI.trim() || `ipfs://${name.trim().replace(/\s+/g, "-").toLowerCase()}`;
-
-    // Encode calldata manually via viem, send as raw tx
-    // This bypasses wagmi's writeContract which Circle SCA wallets struggle with on complex tuples
-    const calldata = encodeFunctionData({
-      abi: FACTORY_ABI,
-      functionName: "deployAgent",
-      args: [[
-        name.trim(),           // name
-        uri,                   // metadataURI
-        false,                 // listOnMarket
-        BigInt(0),             // hourlyRateUsdc
-        [] as `0x${string}`[], // capabilities (bytes32[])
-        BigInt(0),             // availableUntil
-        false,                 // createRetainerPlan
-        BigInt(0),             // retainerPriceUsdc
-        BigInt(0),             // retainerInterval
-        "",                    // retainerDescription
-        false,                 // stakeCollateral
-        BigInt(0),             // stakeAmountUsdc
-      ]],
-    });
-
-    sendTransaction({
-      to: FACTORY_ADDRESS,
-      data: calldata,
-      value: BigInt(0),
+    writeContract({
+      address: FACTORY_ADDRESS, abi: FACTORY_ABI, functionName: "deployAgent",
+      args: [{
+        name: name.trim(),
+        metadataURI: uri,
+        listOnMarket: false,
+        hourlyRateUsdc: BigInt(0),
+        capabilities: [] as `0x${string}`[],
+        availableUntil: BigInt(0),
+        createRetainerPlan: false,
+        retainerPriceUsdc: BigInt(0),
+        retainerInterval: BigInt(0),
+        retainerDescription: "",
+        stakeCollateral: false,
+        stakeAmountUsdc: BigInt(0),
+      }],
     });
     setSubmitted(true);
   }

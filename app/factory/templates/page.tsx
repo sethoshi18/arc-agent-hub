@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
-import { useReadContract, useSendTransaction, useWaitForTransactionReceipt, useAccount } from "wagmi";
-import { encodeFunctionData } from "viem";
+import { useReadContract, useWriteContract, useWaitForTransactionReceipt, useAccount } from "wagmi";
 import Link from "next/link";
 import { FACTORY_ADDRESS, FACTORY_ABI, formatUsdc, intervalLabel, shortAddr } from "@/lib/factory";
 
@@ -16,7 +15,7 @@ function TemplateCard({ id }: { id: bigint }) {
     address: FACTORY_ADDRESS, abi: FACTORY_ABI, functionName: "getTemplate", args: [id],
   });
 
-  const { sendTransaction, data: txHash, isPending, error } = useSendTransaction();
+  const { writeContract, data: txHash, isPending, error } = useWriteContract();
   const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({ hash: txHash });
 
   if (!raw) return null;
@@ -30,15 +29,9 @@ function TemplateCard({ id }: { id: bigint }) {
 
   function handleDeploy() {
     if (!name.trim() || !address) return;
-    const calldata = encodeFunctionData({
-      abi: FACTORY_ABI,
-      functionName: "deployFromTemplate",
+    writeContract({
+      address: FACTORY_ADDRESS, abi: FACTORY_ABI, functionName: "deployFromTemplate",
       args: [id, name.trim(), "", false, false, false],
-    });
-    sendTransaction({
-      to: FACTORY_ADDRESS,
-      data: calldata,
-      value: BigInt(0),
     });
   }
 
