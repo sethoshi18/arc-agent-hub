@@ -12,10 +12,14 @@
  */
 
 import { createConnector } from "wagmi";
-import { defineChain, createPublicClient, type Chain, parseGwei } from "viem";
-import { toWebAuthnAccount, createBundlerClient } from "viem/account-abstraction";
+import { defineChain, createPublicClient, parseGwei } from "viem";
 import {
   type P256Credential,
+  type WebAuthnAccount,
+  toWebAuthnAccount,
+  createBundlerClient,
+} from "viem/account-abstraction";
+import {
   EIP1193Provider,
   WebAuthnMode,
   toCircleSmartAccount,
@@ -82,7 +86,9 @@ export function circlePasskey({ clientUrl, clientKey }: CirclePasskeyParams) {
       transport: modularTransport,
     });
 
-    const webAuthnAccount = toWebAuthnAccount({ credential });
+    const webAuthnAccount = toWebAuthnAccount({
+      credential,
+    }) as WebAuthnAccount;
 
     const circleAccount = await toCircleSmartAccount({
       client: publicClient,
@@ -93,22 +99,11 @@ export function circlePasskey({ clientUrl, clientKey }: CirclePasskeyParams) {
       account: circleAccount,
       chain,
       transport: modularTransport,
-      userOperation: {
-        async estimateFeesPerGas() {
-          // Arc Testnet minimum base fee is ~20 gwei
-          const MIN_PRIORITY_FEE = parseGwei("2");
-          const block = await publicClient.getBlock();
-          const baseFee = block.baseFeePerGas ?? parseGwei("25");
-          return {
-            maxFeePerGas: baseFee * 2n + MIN_PRIORITY_FEE,
-            maxPriorityFeePerGas: MIN_PRIORITY_FEE,
-          };
-        },
-      },
     });
 
     smartAccountAddress = circleAccount.address;
-    provider = new EIP1193Provider({ bundlerClient, publicClient });
+    // EIP1193Provider takes positional args: (bundlerClient, publicClient)
+    provider = new EIP1193Provider(bundlerClient, publicClient);
     currentCredential = credential;
 
     // Persist credential for auto-reconnect
@@ -121,12 +116,12 @@ export function circlePasskey({ clientUrl, clientKey }: CirclePasskeyParams) {
     return { address: smartAccountAddress };
   }
 
-  const connector = createConnector((config) => ({
+  const connector = createConnector((_config) => ({
     id: "circle-passkey",
     name: "Circle Passkey",
     type: "circle-passkey" as const,
 
-    async connect({ isReconnecting } = {}) {
+    async connect({ isReconnecting } = {} as { isReconnecting?: boolean }) {
       try {
         // Auto-reconnect: use stored credential
         if (isReconnecting) {
@@ -210,5 +205,6 @@ export function circlePasskey({ clientUrl, clientKey }: CirclePasskeyParams) {
   }));
 
   // Attach setConnectMode to the connector for external access
-  return Object.assign(connector, { setConnectMode }) as ReturnType<typeof createConnector> & { setConnectMode: typeof setConnectMode };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return Object.assign(connector, { setConnectMode }) as any;
 }
