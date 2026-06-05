@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { PasskeyButton } from "@/components/PasskeyButton";
 import { useState } from "react";
 
 const NAV_LINKS = [
@@ -50,7 +50,7 @@ export function Nav() {
 
           <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
             <div className="nav-desktop">
-              <ConnectButton chainStatus="none" showBalance={false} accountStatus="avatar" />
+              <PasskeyButton />
             </div>
             <button
               className="nav-hamburger"
@@ -62,7 +62,7 @@ export function Nav() {
                 fontSize: 18, display: "none",
               }}
             >
-              {menuOpen ? "\u2715" : "\u2630"}
+              {menuOpen ? "✕" : "☰"}
             </button>
           </div>
         </div>
@@ -89,7 +89,7 @@ export function Nav() {
             ))}
           </nav>
           <div style={{ padding: "20px 16px", borderTop: "1px solid #D4C5A9" }}>
-            <ConnectButton chainStatus="none" showBalance={false} />
+            <PasskeyButton />
           </div>
         </div>
       )}
