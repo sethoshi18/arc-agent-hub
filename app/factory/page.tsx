@@ -1,10 +1,8 @@
 "use client";
 import { useState } from "react";
-import { useReadContract, useAccount } from "wagmi";
-import { encodeFunctionData, type Hex } from "viem";
+import { useReadContract, useWriteContract, useAccount, useWaitForTransactionReceipt } from "wagmi";
 import Link from "next/link";
 import { FACTORY_ADDRESS, FACTORY_ABI, formatUsdc, shortAddr } from "@/lib/factory";
-import { sendSponsoredUserOp } from "@/lib/circle-connector";
 
 /* ── Agent row component ─────────────────────────────────────────────── */
 
@@ -55,48 +53,29 @@ function DeployForm() {
   const [metadataURI, setMetadataURI] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
-  const [txHash, setTxHash] = useState<Hex | undefined>();
-  const [isPending, setIsPending] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
+  const { writeContract, data: txHash, isPending, error } = useWriteContract();
+  const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({ hash: txHash });
 
-  async function handleDeploy() {
+  function handleDeploy() {
     if (!name.trim()) return;
-    setIsPending(true);
-    setError(null);
-    setIsSuccess(false);
-
-    try {
-      const uri = metadataURI.trim() || `ipfs://${name.trim().replace(/\s+/g, "-").toLowerCase()}`;
-      const calldata = encodeFunctionData({
-        abi: FACTORY_ABI,
-        functionName: "deployAgent",
-        args: [{
-          name: name.trim(),
-          metadataURI: uri,
-          listOnMarket: false,
-          hourlyRateUsdc: BigInt(0),
-          capabilities: [] as `0x${string}`[],
-          availableUntil: BigInt(0),
-          createRetainerPlan: false,
-          retainerPriceUsdc: BigInt(0),
-          retainerInterval: BigInt(0),
-          retainerDescription: "",
-          stakeCollateral: false,
-          stakeAmountUsdc: BigInt(0),
-        }],
-      });
-
-      // Bypass EIP1193Provider — call bundlerClient.sendUserOperation directly
-      // with paymaster: true for Circle Gas Station sponsorship
-      const hash = await sendSponsoredUserOp(FACTORY_ADDRESS, calldata);
-      setTxHash(hash);
-      setIsSuccess(true);
-    } catch (e: any) {
-      setError(e);
-    } finally {
-      setIsPending(false);
-    }
+    const uri = metadataURI.trim() || `ipfs://${name.trim().replace(/\s+/g, "-").toLowerCase()}`;
+    writeContract({
+      address: FACTORY_ADDRESS, abi: FACTORY_ABI, functionName: "deployAgent",
+      args: [{
+        name: name.trim(),
+        metadataURI: uri,
+        listOnMarket: false,
+        hourlyRateUsdc: BigInt(0),
+        capabilities: [] as `0x${string}`[],
+        availableUntil: BigInt(0),
+        createRetainerPlan: false,
+        retainerPriceUsdc: BigInt(0),
+        retainerInterval: BigInt(0),
+        retainerDescription: "",
+        stakeCollateral: false,
+        stakeAmountUsdc: BigInt(0),
+      }],
+    });
   }
 
   if (!address) {
@@ -149,11 +128,11 @@ function DeployForm() {
 
         <button
           onClick={handleDeploy}
-          disabled={!name.trim() || isPending}
+          disabled={!name.trim() || isPending || isConfirming}
           className="btn btn-primary"
           style={{ fontSize: 14, padding: "12px 24px", width: "100%", marginTop: 8 }}
         >
-          {isPending ? "Deploying..." : "Deploy Agent"}
+          {isPending ? "Confirm in wallet..." : isConfirming ? "Deploying..." : "Deploy Agent"}
         </button>
 
         {isSuccess && (
