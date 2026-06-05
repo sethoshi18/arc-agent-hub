@@ -10,6 +10,7 @@ const NAV_LINKS = [
   ["Retainers", "/retainers"],
   ["Staking", "/staking"],
   ["DAO", "/dao"],
+  ["Nanopay", "/nanopayments"],
   ["Dashboard", "/dashboard"],
 ];
 
@@ -61,7 +62,7 @@ export function Nav() {
                 fontSize: 18, display: "none",
               }}
             >
-              {menuOpen ? "✕" : "☰"}
+              {menuOpen ? "\u2715" : "\u2630"}
             </button>
           </div>
         </div>

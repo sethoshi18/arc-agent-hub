@@ -1,12 +1,13 @@
 {
   "name": "arc-agent-hub",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "agent": "node --experimental-transform-types --no-warnings --env-file=.env.local scripts/agent-buyer.mts"
   },
   "dependencies": {
     "next": "14.2.29",
@@ -18,7 +19,10 @@
     "@tanstack/react-query": "^5.40.0",
     "clsx": "^2.1.0",
     "tailwind-merge": "^2.3.0",
-    "lucide-react": "^0.395.0"
+    "lucide-react": "^0.395.0",
+    "@circle-fin/x402-batching": "^2.0.4",
+    "@x402/core": "^2.6.0",
+    "@x402/evm": "^2.6.0"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
