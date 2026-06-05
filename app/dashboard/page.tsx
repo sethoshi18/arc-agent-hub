@@ -37,7 +37,7 @@ function JobRow({ jobId }: { jobId: bigint }) {
 
 export default function DashboardPage() {
   const { address, isConnected } = useAccount();
-  const zeroAddr = "0x0000000000000000000000000000000000000000" as \`0x\${string}\`;
+  const zeroAddr = "0x0000000000000000000000000000000000000000" as `0x${string}`;
   const { data: agentIds } = useReadContract({ address: CONTRACTS.agentIdentity, abi: IDENTITY_ABI, functionName: "getAgentsByOwner", args: [address ?? zeroAddr], query: { enabled: !!address } });
   const { data: jobIds } = useReadContract({ address: CONTRACTS.agentJob, abi: JOB_ABI, functionName: "getJobsByClient", args: [address ?? zeroAddr], query: { enabled: !!address } });
 
@@ -52,15 +52,14 @@ export default function DashboardPage() {
     <div style={{ maxWidth: 800, margin: "0 auto", padding: "40px 24px" }}>
       <h1 style={{ fontWeight: 700, fontSize: 28, color: "var(--text)", letterSpacing: "-0.02em", marginBottom: 4 }}>Dashboard</h1>
       <a href={arcScan(address!)} target="_blank" style={{ fontSize: 12, color: "var(--muted)", fontFamily: "JetBrains Mono,monospace", textDecoration: "none", display: "inline-block", marginBottom: 32 }}>
-        {address} \u2197
+        {address} ↗
       </a>
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 24 }}>
-        {/* My Agents */}
         <div className="card" style={{ padding: 24 }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
             <h2 style={{ fontWeight: 700, fontSize: 16, color: "var(--text)" }}>My Agents</h2>
-            <Link href="/agents" style={{ fontSize: 12, color: "var(--muted)", textDecoration: "none" }}>Browse all \u2192</Link>
+            <Link href="/agents" style={{ fontSize: 12, color: "var(--muted)", textDecoration: "none" }}>Browse all →</Link>
           </div>
           {!agentIds?.length ? (
             <p style={{ color: "var(--muted)", fontSize: 13, textAlign: "center", padding: "24px 0" }}>No agents registered yet</p>
@@ -69,16 +68,15 @@ export default function DashboardPage() {
           )}
         </div>
 
-        {/* My Jobs */}
         <div className="card" style={{ padding: 24 }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
             <h2 style={{ fontWeight: 700, fontSize: 16, color: "var(--text)" }}>My Jobs</h2>
-            <Link href="/rfps/new" style={{ fontSize: 12, color: "var(--muted)", textDecoration: "none" }}>Post RFP \u2192</Link>
+            <Link href="/rfps/new" style={{ fontSize: 12, color: "var(--muted)", textDecoration: "none" }}>Post RFP →</Link>
           </div>
           {!jobIds?.length ? (
             <div style={{ textAlign: "center", padding: "24px 0" }}>
               <p style={{ color: "var(--muted)", fontSize: 13, marginBottom: 8 }}>No jobs posted yet</p>
-              <Link href="/rfps/new" style={{ fontSize: 12, color: "var(--text)", fontWeight: 500 }}>Post your first RFP \u2192</Link>
+              <Link href="/rfps/new" style={{ fontSize: 12, color: "var(--text)", fontWeight: 500 }}>Post your first RFP →</Link>
             </div>
           ) : (
             <div>{jobIds.map((id) => <JobRow key={id.toString()} jobId={id} />)}</div>
@@ -86,7 +84,6 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Testnet resources */}
       <div className="card" style={{ padding: 24 }}>
         <h2 style={{ fontWeight: 700, fontSize: 16, color: "var(--text)", marginBottom: 16 }}>Testnet Resources</h2>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10 }}>
@@ -101,7 +98,7 @@ export default function DashboardPage() {
             <a key={href} href={href} target="_blank"
               style={{ background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: 8,
                 padding: "10px 14px", fontSize: 12, color: "var(--muted)", textDecoration: "none", transition: "border-color .15s" }}>
-              {label} \u2197
+              {label} ↗
             </a>
           ))}
         </div>

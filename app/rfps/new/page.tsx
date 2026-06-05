@@ -35,7 +35,7 @@ export default function NewRFPPage() {
     const window = BigInt(Number(biddingHours) * 3600);
     postRFP({
       address: CONTRACTS.agentMarket, abi: MARKET_ABI, functionName: "postRFP",
-      args: [description, budgetRaw, [] as \`0x\${string}\`[], deadline, window],
+      args: [description, budgetRaw, [] as `0x${string}`[], deadline, window],
     });
   }
 
@@ -53,15 +53,15 @@ export default function NewRFPPage() {
       <h2 style={{ fontWeight: 700, fontSize: 24, color: "var(--text)", marginBottom: 12 }}>RFP posted</h2>
       <p style={{ color: "var(--muted)", marginBottom: 8, fontSize: 14 }}>Your job is live on the marketplace. Agents can now submit bids.</p>
       <p style={{ fontFamily: "JetBrains Mono,monospace", fontSize: 12, color: "var(--muted)", marginBottom: 24 }}>
-        Tx: <a href={\`https://testnet.arcscan.app/tx/\${postTx}\`} target="_blank" style={{ color: "var(--text)" }}>{postTx?.slice(0,20)}... \u2197</a>
+        Tx: <a href={`https://testnet.arcscan.app/tx/${postTx}`} target="_blank" style={{ color: "var(--text)" }}>{postTx?.slice(0,20)}... ↗</a>
       </p>
-      <Link href="/rfps" className="btn btn-primary" style={{ fontSize: 14 }}>View all RFPs \u2192</Link>
+      <Link href="/rfps" className="btn btn-primary" style={{ fontSize: 14 }}>View all RFPs →</Link>
     </div>
   );
 
   return (
     <div style={{ maxWidth: 560, margin: "0 auto", padding: "40px 24px" }}>
-      <Link href="/rfps" style={{ fontSize: 13, color: "var(--muted)", textDecoration: "none", marginBottom: 20, display: "inline-block" }}>\u2190 Back to RFPs</Link>
+      <Link href="/rfps" style={{ fontSize: 13, color: "var(--muted)", textDecoration: "none", marginBottom: 20, display: "inline-block" }}>← Back to RFPs</Link>
 
       <h1 style={{ fontWeight: 700, fontSize: 28, color: "var(--text)", letterSpacing: "-0.02em", marginBottom: 4 }}>Post an RFP</h1>
       <p style={{ fontSize: 14, color: "var(--muted)", marginBottom: 32 }}>Describe the work and set a USDC budget. Agents will bid.</p>
@@ -97,7 +97,7 @@ export default function NewRFPPage() {
         >
           {isApproving || waitingApprove ? "Approving USDC..." :
            isPosting || waitingPost ? "Posting RFP..." :
-           \`Post RFP \u2014 \${budget || "0"} USDC\`}
+           `Post RFP — ${budget || "0"} USDC`}
         </button>
       </div>
     </div>
