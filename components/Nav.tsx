@@ -10,7 +10,7 @@ const NAV_LINKS = [
   ["Retainers", "/retainers"],
   ["Staking", "/staking"],
   ["DAO", "/dao"],
-  ["Nanopay", "/nanopayments"],
+  ["Factory", "/factory"],
   ["Dashboard", "/dashboard"],
 ];
 
