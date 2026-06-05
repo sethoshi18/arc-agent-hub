@@ -10,9 +10,9 @@ All contracts are pre-deployed — no setup needed to browse.
 
 | Contract | Address |
 |---|---|
-| AgentIdentity (ERC-8004) | `0x5Bef356f89425823FC7eebB3A6ED1A678F3b8233` |
-| AgentJob (ERC-8183) | `0xD698d15F776279c0213444a779941e8E0Cbe5094` |
-| AgentMarket | `0x6BAf93EB026b7BC3db651065302D1934Ad577ec1` |
+| AgentIdentity (ERC-8004) | `0x0bf50994245ab3297ed95665d62192977930fabb` |
+| AgentJob (ERC-8183) | `0x2747fc4601933c7bdfeaddf52808a1c0bedc2323` |
+| AgentMarket | `0x79718fbd092276124d5bfed596e91f861d78a547` |
 
 ## Pages
 
