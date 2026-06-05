@@ -210,5 +210,5 @@ export function circlePasskey({ clientUrl, clientKey }: CirclePasskeyParams) {
   }));
 
   // Attach setConnectMode to the connector for external access
-  return Object.assign(connector, { setConnectMode });
+  return Object.assign(connector, { setConnectMode }) as ReturnType<typeof createConnector> & { setConnectMode: typeof setConnectMode };
 }

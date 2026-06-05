@@ -4,6 +4,8 @@ import { useState, useRef, useEffect } from "react";
 import { useAccount, useConnect, useDisconnect } from "wagmi";
 import { circleConnector } from "@/lib/wagmi";
 
+type CircleConnectorWithMode = typeof circleConnector & { setConnectMode: (mode: "register" | "login") => void };
+
 /**
  * Circle Passkey Connect Button
  *
@@ -32,7 +34,7 @@ export function PasskeyButton() {
 
   const handleConnect = (mode: "register" | "login") => {
     setShowConnectMenu(false);
-    circleConnector.setConnectMode(mode);
+    (circleConnector as CircleConnectorWithMode).setConnectMode(mode);
     connect({ connector: circleConnector });
   };
 
