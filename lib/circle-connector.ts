@@ -121,7 +121,9 @@ export function circlePasskey({ clientUrl, clientKey }: CirclePasskeyParams) {
     name: "Circle Passkey",
     type: "circle-passkey" as const,
 
-    async connect({ isReconnecting } = {} as { isReconnecting?: boolean }) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async connect(params?: any): Promise<any> {
+      const { isReconnecting } = params ?? {};
       try {
         // Auto-reconnect: use stored credential
         if (isReconnecting) {
@@ -130,7 +132,7 @@ export function circlePasskey({ clientUrl, clientKey }: CirclePasskeyParams) {
             const credential = JSON.parse(stored) as P256Credential;
             await initializeFromCredential(credential);
             return {
-              accounts: [smartAccountAddress!],
+              accounts: [smartAccountAddress!] as const,
               chainId: chain.id,
             };
           }
@@ -156,7 +158,7 @@ export function circlePasskey({ clientUrl, clientKey }: CirclePasskeyParams) {
         await initializeFromCredential(credential);
 
         return {
-          accounts: [smartAccountAddress!],
+          accounts: [smartAccountAddress!] as const,
           chainId: chain.id,
         };
       } catch (error) {
