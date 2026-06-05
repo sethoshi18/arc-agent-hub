@@ -9,10 +9,12 @@
  */
 
 import { createConnector } from "wagmi";
-import { defineChain, createPublicClient } from "viem";
+import { defineChain, createPublicClient, type Hex, type Address } from "viem";
 import {
   type P256Credential,
   type WebAuthnAccount,
+  type SmartAccount,
+  type BundlerClient,
   toWebAuthnAccount,
   createBundlerClient,
 } from "viem/account-abstraction";
@@ -46,6 +48,33 @@ interface CirclePasskeyParams {
 }
 
 type ConnectMode = "register" | "login";
+
+// Exposed bundler client for direct sendUserOperation calls (bypasses EIP1193Provider)
+let _bundlerClient: BundlerClient | null = null;
+let _circleAccount: SmartAccount | null = null;
+
+/**
+ * Send a write transaction with Circle Gas Station paymaster sponsorship.
+ * Bypasses EIP1193Provider (which doesn't pass paymaster context to the bundler)
+ * and calls bundlerClient.sendUserOperation directly with paymaster: true.
+ */
+export async function sendSponsoredUserOp(
+  to: Address,
+  data: Hex,
+  value: bigint = 0n,
+): Promise<Hex> {
+  if (!_bundlerClient || !_circleAccount) {
+    throw new Error("Wallet not connected. Connect via passkey first.");
+  }
+  const hash = await _bundlerClient.sendUserOperation({
+    account: _circleAccount,
+    calls: [{ to, data, value }],
+    paymaster: true,
+  });
+  // Wait for the UO to be included
+  const receipt = await _bundlerClient.waitForUserOperationReceipt({ hash });
+  return receipt.receipt.transactionHash;
+}
 
 export function circlePasskey({ clientUrl, clientKey }: CirclePasskeyParams) {
   let provider: InstanceType<typeof EIP1193Provider> | null = null;
@@ -92,6 +121,8 @@ export function circlePasskey({ clientUrl, clientKey }: CirclePasskeyParams) {
     });
 
     smartAccountAddress = circleAccount.address;
+    _bundlerClient = bundlerClient;
+    _circleAccount = circleAccount;
     provider = new EIP1193Provider(bundlerClient, publicClient);
 
     try {
@@ -175,6 +206,8 @@ export function circlePasskey({ clientUrl, clientKey }: CirclePasskeyParams) {
     async disconnect() {
       provider = null;
       smartAccountAddress = null;
+      _bundlerClient = null;
+      _circleAccount = null;
       if (typeof window !== "undefined") {
         try {
           localStorage.removeItem(CREDENTIAL_STORAGE_KEY);

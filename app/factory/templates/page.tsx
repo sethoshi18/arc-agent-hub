@@ -1,8 +1,10 @@
 "use client";
 import { useState } from "react";
-import { useReadContract, useWriteContract, useWaitForTransactionReceipt, useAccount } from "wagmi";
+import { useReadContract, useAccount } from "wagmi";
+import { encodeFunctionData, type Hex } from "viem";
 import Link from "next/link";
 import { FACTORY_ADDRESS, FACTORY_ABI, formatUsdc, intervalLabel, shortAddr } from "@/lib/factory";
+import { sendSponsoredUserOp } from "@/lib/circle-connector";
 
 /* ── Template card ───────────────────────────────────────────────────── */
 
@@ -15,8 +17,10 @@ function TemplateCard({ id }: { id: bigint }) {
     address: FACTORY_ADDRESS, abi: FACTORY_ABI, functionName: "getTemplate", args: [id],
   });
 
-  const { writeContract, data: txHash, isPending, error } = useWriteContract();
-  const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({ hash: txHash });
+  const [txHash, setTxHash] = useState<Hex | undefined>();
+  const [isPending, setIsPending] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
 
   if (!raw) return null;
   const tmpl = raw as {
@@ -27,12 +31,24 @@ function TemplateCard({ id }: { id: bigint }) {
     createdAt: bigint; useCount: bigint;
   };
 
-  function handleDeploy() {
+  async function handleDeploy() {
     if (!name.trim() || !address) return;
-    writeContract({
-      address: FACTORY_ADDRESS, abi: FACTORY_ABI, functionName: "deployFromTemplate",
-      args: [id, name.trim(), "", false, false, false],
-    });
+    setIsPending(true);
+    setError(null);
+    try {
+      const calldata = encodeFunctionData({
+        abi: FACTORY_ABI,
+        functionName: "deployFromTemplate",
+        args: [id, name.trim(), "", false, false, false],
+      });
+      const hash = await sendSponsoredUserOp(FACTORY_ADDRESS, calldata);
+      setTxHash(hash);
+      setIsSuccess(true);
+    } catch (e: any) {
+      setError(e);
+    } finally {
+      setIsPending(false);
+    }
   }
 
   return (
@@ -108,11 +124,11 @@ function TemplateCard({ id }: { id: bigint }) {
             <div style={{ display: "flex", gap: 8 }}>
               <button
                 onClick={handleDeploy}
-                disabled={!name.trim() || isPending || isConfirming}
+                disabled={!name.trim() || isPending}
                 className="btn btn-primary"
                 style={{ fontSize: 13, padding: "10px 16px", flex: 1 }}
               >
-                {isPending ? "Confirm..." : isConfirming ? "Deploying..." : "Deploy"}
+                {isPending ? "Deploying..." : "Deploy"}
               </button>
               <button
                 onClick={() => { setDeploying(false); setName(""); }}
