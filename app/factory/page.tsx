@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
-import { useReadContract, useWriteContract, useAccount, useWaitForTransactionReceipt } from "wagmi";
-import { parseUnits, keccak256, toHex } from "viem";
+import { useReadContract, useSendTransaction, useAccount, useWaitForTransactionReceipt } from "wagmi";
+import { encodeFunctionData } from "viem";
 import Link from "next/link";
 import { FACTORY_ADDRESS, FACTORY_ABI, formatUsdc, shortAddr } from "@/lib/factory";
 
@@ -54,15 +54,18 @@ function DeployForm() {
   const [metadataURI, setMetadataURI] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
-  const { writeContract, data: txHash, isPending, error } = useWriteContract();
+  const { sendTransaction, data: txHash, isPending, error } = useSendTransaction();
   const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({ hash: txHash });
 
   function handleDeploy() {
     if (!name.trim()) return;
     const uri = metadataURI.trim() || `ipfs://${name.trim().replace(/\s+/g, "-").toLowerCase()}`;
-    // Pass struct as positional tuple to match Circle passkey wallet expectations
-    writeContract({
-      address: FACTORY_ADDRESS, abi: FACTORY_ABI, functionName: "deployAgent",
+
+    // Encode calldata manually via viem, send as raw tx
+    // This bypasses wagmi's writeContract which Circle SCA wallets struggle with on complex tuples
+    const calldata = encodeFunctionData({
+      abi: FACTORY_ABI,
+      functionName: "deployAgent",
       args: [[
         name.trim(),           // name
         uri,                   // metadataURI
@@ -77,7 +80,12 @@ function DeployForm() {
         false,                 // stakeCollateral
         BigInt(0),             // stakeAmountUsdc
       ]],
-      gas: BigInt(1_000_000),
+    });
+
+    sendTransaction({
+      to: FACTORY_ADDRESS,
+      data: calldata,
+      value: BigInt(0),
     });
     setSubmitted(true);
   }
