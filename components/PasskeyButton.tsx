@@ -4,20 +4,19 @@ import { useState, useRef, useEffect } from "react";
 import { useAccount, useConnect, useDisconnect } from "wagmi";
 import { circleConnector } from "@/lib/wagmi";
 
-type CircleConnectorWithMode = typeof circleConnector & { setConnectMode: (mode: "register" | "login") => void };
-
 /**
  * Circle Passkey Connect Button
  *
  * Replaces RainbowKit's ConnectButton with Circle Modular Wallets passkey auth.
- * Supports register (new wallet) and login (existing wallet) flows.
+ * Shows error messages when connection fails.
  */
 export function PasskeyButton() {
-  const { address, isConnected, isConnecting } = useAccount();
-  const { connect } = useConnect();
+  const { address, isConnected } = useAccount();
+  const { connect, isPending: isConnecting, error: connectError } = useConnect();
   const { disconnect } = useDisconnect();
   const [showMenu, setShowMenu] = useState(false);
   const [showConnectMenu, setShowConnectMenu] = useState(false);
+  const [localError, setLocalError] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
   // Close menus on outside click
@@ -32,11 +31,48 @@ export function PasskeyButton() {
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
+  // Surface wagmi connect errors
+  useEffect(() => {
+    if (connectError) {
+      setLocalError(connectError.message?.slice(0, 120) ?? "Connection failed");
+      // Auto-clear error after 8 seconds
+      const timer = setTimeout(() => setLocalError(null), 8000);
+      return () => clearTimeout(timer);
+    }
+  }, [connectError]);
+
   const handleConnect = (mode: "register" | "login") => {
     setShowConnectMenu(false);
-    (circleConnector as CircleConnectorWithMode).setConnectMode(mode);
+    setLocalError(null);
+    try {
+      circleConnector.setConnectMode(mode);
+    } catch {
+      // setConnectMode may not exist if connector type doesn't match
+    }
     connect({ connector: circleConnector });
   };
+
+  // Error display
+  if (localError) {
+    return (
+      <div style={{ maxWidth: 260 }}>
+        <div style={{
+          padding: "8px 12px", borderRadius: 8, fontSize: 11,
+          fontFamily: "'IBM Plex Mono', monospace", color: "#B85C3A",
+          background: "rgba(184,92,58,0.08)", border: "1px solid rgba(184,92,58,0.2)",
+          marginBottom: 6, lineHeight: 1.4,
+        }}>
+          {localError}
+        </div>
+        <button
+          onClick={() => { setLocalError(null); setShowConnectMenu(true); }}
+          style={btnStyle({})}
+        >
+          Try Again
+        </button>
+      </div>
+    );
+  }
 
   if (isConnecting) {
     return (
@@ -121,8 +157,6 @@ export function PasskeyButton() {
   );
 }
 
-// --- Styles (matching Arc Agent Hub design system) ---
-
 function btnStyle(opts: { connected?: boolean; disabled?: boolean }) {
   return {
     display: "flex" as const,
@@ -136,7 +170,7 @@ function btnStyle(opts: { connected?: boolean; disabled?: boolean }) {
     fontFamily: "'IBM Plex Mono', monospace",
     fontSize: 12,
     fontWeight: 500 as const,
-    cursor: opts.disabled ? "wait" : "pointer" as const,
+    cursor: opts.disabled ? "wait" : ("pointer" as const),
     opacity: opts.disabled ? 0.6 : 1,
     transition: "all .15s",
   };
@@ -146,27 +180,27 @@ const dotStyle = {
   width: 8,
   height: 8,
   borderRadius: "50%",
-  background: "#A0722A",
-  animation: "pulse 1.5s infinite",
+  background: "#F5F0E8",
+  opacity: 0.6,
 };
 
-const avatarStyle = {
+const avatarStyle: React.CSSProperties = {
   width: 24,
   height: 24,
   borderRadius: "50%",
   background: "rgba(160,114,42,0.12)",
   border: "1px solid rgba(160,114,42,0.25)",
-  display: "flex" as const,
-  alignItems: "center" as const,
-  justifyContent: "center" as const,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
   fontSize: 9,
-  fontWeight: 700 as const,
+  fontWeight: 700,
   color: "#A0722A",
   fontFamily: "'IBM Plex Mono', monospace",
 };
 
-const menuStyle = {
-  position: "absolute" as const,
+const menuStyle: React.CSSProperties = {
+  position: "absolute",
   top: "calc(100% + 6px)",
   right: 0,
   background: "#FDFBF7",
@@ -178,12 +212,12 @@ const menuStyle = {
   zIndex: 200,
 };
 
-const menuItemStyle = {
-  display: "block" as const,
+const menuItemStyle: React.CSSProperties = {
+  display: "block",
   padding: "10px 12px",
   borderRadius: 6,
   fontSize: 12,
   fontFamily: "'IBM Plex Mono', monospace",
   color: "#3D3530",
-  textDecoration: "none" as const,
+  textDecoration: "none",
 };

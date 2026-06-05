@@ -4,15 +4,12 @@
  * Bridges Circle's passkey-based smart accounts into wagmi so all existing
  * hooks (useAccount, useReadContract, useWriteContract) work transparently.
  *
- * Under the hood:
- *   Passkey (WebAuthn) → Circle Smart Account (ERC-4337) → EIP-1193 Provider → wagmi
- *
- * Transactions are sent as UserOperations via Circle's bundler, with the
- * paymaster covering gas (gasless UX for users).
+ * All browser-only APIs (WebAuthn, localStorage) are deferred to connect()
+ * to avoid SSR failures in Next.js.
  */
 
 import { createConnector } from "wagmi";
-import { defineChain, createPublicClient, parseGwei } from "viem";
+import { defineChain, createPublicClient } from "viem";
 import {
   type P256Credential,
   type WebAuthnAccount,
@@ -30,7 +27,6 @@ import {
 
 const CREDENTIAL_STORAGE_KEY = "arc-agent-hub:circle-credential";
 
-// Arc Testnet chain definition for Circle Modular Wallets
 export const arcTestnetChain = defineChain({
   id: 5042002,
   name: "Arc Testnet",
@@ -51,26 +47,16 @@ interface CirclePasskeyParams {
 
 type ConnectMode = "register" | "login";
 
-/**
- * Creates a wagmi v2 connector backed by Circle Modular Wallets + passkeys.
- *
- * Usage in wagmi config:
- *   circlePasskey({ clientUrl: "...", clientKey: "..." })
- */
 export function circlePasskey({ clientUrl, clientKey }: CirclePasskeyParams) {
-  // Shared state across connector lifecycle
   let provider: InstanceType<typeof EIP1193Provider> | null = null;
   let smartAccountAddress: `0x${string}` | null = null;
-  let currentCredential: P256Credential | null = null;
   let connectMode: ConnectMode = "login";
 
   const chain = arcTestnetChain;
-  const passkeyTransport = toPasskeyTransport(clientUrl, clientKey);
 
-  /**
-   * Set the connect mode before calling wagmi's connect().
-   * Call this from your UI before triggering the connection.
-   */
+  // NOTE: passkeyTransport is created lazily inside connect(), not here,
+  // because toPasskeyTransport may use browser-only APIs that break SSR.
+
   function setConnectMode(mode: ConnectMode) {
     connectMode = mode;
   }
@@ -102,21 +88,19 @@ export function circlePasskey({ clientUrl, clientKey }: CirclePasskeyParams) {
     });
 
     smartAccountAddress = circleAccount.address;
-    // EIP1193Provider takes positional args: (bundlerClient, publicClient)
     provider = new EIP1193Provider(bundlerClient, publicClient);
-    currentCredential = credential;
 
-    // Persist credential for auto-reconnect
     try {
       localStorage.setItem(CREDENTIAL_STORAGE_KEY, JSON.stringify(credential));
     } catch {
-      // localStorage may be unavailable in some contexts
+      // SSR or private browsing
     }
 
     return { address: smartAccountAddress };
   }
 
-  const connector = createConnector((_config) => ({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const connector = createConnector((_config: any) => ({
     id: "circle-passkey",
     name: "Circle Passkey",
     type: "circle-passkey" as const,
@@ -124,6 +108,17 @@ export function circlePasskey({ clientUrl, clientKey }: CirclePasskeyParams) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async connect(params?: any): Promise<any> {
       const { isReconnecting } = params ?? {};
+
+      // Guard: skip during SSR
+      if (typeof window === "undefined") {
+        throw new Error("Circle Passkey connector requires a browser environment");
+      }
+
+      // Guard: skip if client key is missing
+      if (!clientKey) {
+        throw new Error("NEXT_PUBLIC_CIRCLE_CLIENT_KEY is not configured");
+      }
+
       try {
         // Auto-reconnect: use stored credential
         if (isReconnecting) {
@@ -139,7 +134,9 @@ export function circlePasskey({ clientUrl, clientKey }: CirclePasskeyParams) {
           throw new Error("No stored credential for reconnection");
         }
 
-        // Manual connect: register or login based on mode
+        // Create passkey transport lazily (browser-only)
+        const passkeyTransport = toPasskeyTransport(clientUrl, clientKey);
+
         let credential: P256Credential;
 
         if (connectMode === "register") {
@@ -164,6 +161,9 @@ export function circlePasskey({ clientUrl, clientKey }: CirclePasskeyParams) {
       } catch (error) {
         smartAccountAddress = null;
         provider = null;
+        // Surface the error so the user can see what went wrong
+        const msg = error instanceof Error ? error.message : String(error);
+        console.error("[Circle Passkey] Connect failed:", msg);
         throw error;
       }
     },
@@ -171,11 +171,12 @@ export function circlePasskey({ clientUrl, clientKey }: CirclePasskeyParams) {
     async disconnect() {
       provider = null;
       smartAccountAddress = null;
-      currentCredential = null;
-      try {
-        localStorage.removeItem(CREDENTIAL_STORAGE_KEY);
-      } catch {
-        // Ignore
+      if (typeof window !== "undefined") {
+        try {
+          localStorage.removeItem(CREDENTIAL_STORAGE_KEY);
+        } catch {
+          // Ignore
+        }
       }
     },
 
@@ -193,6 +194,7 @@ export function circlePasskey({ clientUrl, clientKey }: CirclePasskeyParams) {
 
     async isAuthorized() {
       if (smartAccountAddress && provider) return true;
+      if (typeof window === "undefined") return false;
       try {
         const stored = localStorage.getItem(CREDENTIAL_STORAGE_KEY);
         return !!stored;
@@ -206,7 +208,6 @@ export function circlePasskey({ clientUrl, clientKey }: CirclePasskeyParams) {
     onDisconnect() {},
   }));
 
-  // Attach setConnectMode to the connector for external access
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return Object.assign(connector, { setConnectMode }) as any;
 }
