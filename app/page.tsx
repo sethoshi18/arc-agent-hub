@@ -41,6 +41,15 @@ function WaterBackground() {
       >
         <source src={BG_VIDEO_SRC} type="video/mp4" />
       </video>
+      {/* Dark gradient scrim for text readability */}
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          background:
+            "linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.15) 40%, rgba(0,0,0,0.25) 100%)",
+        }}
+      />
     </div>
   );
 }
@@ -100,11 +109,12 @@ export default function HomePage() {
               fontWeight: 600,
               letterSpacing: "0.15em",
               textTransform: "uppercase",
-              color: "#A0722A",
-              background: "rgba(160,114,42,0.08)",
-              border: "1px solid rgba(160,114,42,0.2)",
+              color: "rgba(255,255,255,0.85)",
+              background: "rgba(255,255,255,0.12)",
+              border: "1px solid rgba(255,255,255,0.25)",
               borderRadius: 99,
               padding: "5px 16px",
+              backdropFilter: "blur(4px)",
             }}
           >
             LIVE ON ARC TESTNET
@@ -119,8 +129,9 @@ export default function HomePage() {
             fontSize: "clamp(2.5rem, 6vw, 5rem)",
             lineHeight: 1.08,
             letterSpacing: "-0.04em",
-            color: "#1A1A1A",
+            color: "#FFFFFF",
             margin: "0 0 24px",
+            textShadow: "0 2px 20px rgba(0,0,0,0.3)",
           }}
         >
           The complete agent economy.
@@ -133,10 +144,11 @@ export default function HomePage() {
             fontFamily: "'Inter', sans-serif",
             fontSize: 18,
             lineHeight: 1.65,
-            color: "#3D3530",
+            color: "rgba(255,255,255,0.85)",
             maxWidth: 600,
             margin: "0 auto 40px",
             fontWeight: 400,
+            textShadow: "0 1px 8px rgba(0,0,0,0.25)",
           }}
         >
           Eight composable contracts that give AI agents identity, payments,
@@ -156,7 +168,7 @@ export default function HomePage() {
           <Link href="/factory" className="btn btn-primary">
             Deploy an agent
           </Link>
-          <Link href="/agents" className="btn btn-outline">
+          <Link href="/agents" className="btn" style={{ background: "rgba(255,255,255,0.12)", color: "#FFFFFF", border: "1.5px solid rgba(255,255,255,0.35)", backdropFilter: "blur(4px)" }}>
             Explore the marketplace
           </Link>
         </div>
@@ -166,7 +178,7 @@ export default function HomePage() {
           style={{
             marginTop: 56,
             paddingTop: 32,
-            borderTop: "1px solid rgba(212,197,169,0.5)",
+            borderTop: "1px solid rgba(255,255,255,0.15)",
           }}
         >
           {/* Built on */}
@@ -187,7 +199,7 @@ export default function HomePage() {
                 fontWeight: 600,
                 letterSpacing: "0.15em",
                 textTransform: "uppercase",
-                color: "#6B6560",
+                color: "rgba(255,255,255,0.5)",
               }}
             >
               BUILT ON
@@ -205,9 +217,9 @@ export default function HomePage() {
                 style={{
                   fontFamily: "'IBM Plex Mono', monospace",
                   fontSize: 12,
-                  color: "#3D3530",
+                  color: "rgba(255,255,255,0.8)",
                   textDecoration: "none",
-                  borderBottom: "1px solid #D4C5A9",
+                  borderBottom: "1px solid rgba(255,255,255,0.25)",
                   paddingBottom: 1,
                 }}
               >
@@ -237,7 +249,8 @@ export default function HomePage() {
                     fontFamily: "'IBM Plex Mono', monospace",
                     fontSize: 22,
                     fontWeight: 600,
-                    color: "#A0722A",
+                    color: "#C9A55A",
+                    textShadow: "0 1px 6px rgba(0,0,0,0.2)",
                   }}
                 >
                   {stat.value}
@@ -246,7 +259,7 @@ export default function HomePage() {
                   style={{
                     fontFamily: "'IBM Plex Mono', monospace",
                     fontSize: 12,
-                    color: "#6B6560",
+                    color: "rgba(255,255,255,0.6)",
                     marginLeft: 8,
                   }}
                 >
