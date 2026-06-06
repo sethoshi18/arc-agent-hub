@@ -4,17 +4,17 @@ import Link from "next/link";
 import { useEffect, useRef } from "react";
 
 /* ═══════════════════════════════════════════════════════════════
-   NOISE GRADIENT BACKGROUND
-   Slow-breathing organic color field — aurora through frosted glass.
-   Pure vanilla Canvas, zero dependencies, 1/6 resolution upscaled.
+   WATER SURFACE BACKGROUND
+   Gentle horizontal ripples with warm highlights — like sunlight
+   on calm water. Pure vanilla Canvas, zero dependencies.
    ═══════════════════════════════════════════════════════════════ */
 
 const PALETTE: [number, number, number][] = [
-  [245, 240, 232], // warm cream (dominant — #F5F0E8)
-  [237, 232, 220], // warm sand (#EDE8DC)
-  [220, 200, 165], // light gold
-  [235, 220, 195], // soft wheat
-  [210, 190, 155], // warm amber
+  [222, 215, 200], // warm shadow (trough)
+  [232, 225, 212], // warm mid
+  [245, 240, 232], // cream base (dominant)
+  [248, 243, 233], // light cream (crest)
+  [242, 230, 205], // warm gold highlight (sunlight catch)
 ];
 
 function lerpColor(
@@ -38,24 +38,36 @@ function paletteAt(v: number): [number, number, number] {
   return lerpColor(PALETTE[i], PALETTE[i + 1], t);
 }
 
-/** Layered sine pseudo-noise — 5 octaves, two passes blended */
-function noise2d(x: number, y: number, time: number): number {
-  let v1 = 0;
-  v1 += Math.sin(x * 1.2 + time * 0.7) * 0.30;
-  v1 += Math.sin(y * 1.5 + time * 0.5) * 0.25;
-  v1 += Math.sin((x + y) * 0.9 + time * 0.9) * 0.20;
-  v1 += Math.sin(x * 2.1 - y * 1.8 + time * 0.6) * 0.15;
-  v1 += Math.sin(y * 2.8 + x * 0.7 + time * 1.1) * 0.10;
+/** Water surface — layered horizontal waves with specular highlights */
+function waterSurface(x: number, y: number, time: number): number {
+  // Stretch x (wide ripples) and compress y (thin ripple lines)
+  const wx = x * 8.0;
+  const wy = y * 3.0;
 
-  let v2 = 0;
-  v2 += Math.sin(x * 2.5 + time * 1.3 + 2.0) * 0.25;
-  v2 += Math.sin(y * 3.0 + time * 0.8 + 4.0) * 0.25;
-  v2 += Math.sin((x - y) * 1.7 + time * 1.0 + 1.5) * 0.20;
-  v2 += Math.sin(x * 0.8 + y * 2.2 + time * 1.4 + 3.0) * 0.15;
-  v2 += Math.sin(y * 1.3 - x * 2.9 + time * 0.7 + 5.0) * 0.15;
+  let v = 0;
 
-  const blended = v1 * 0.55 + v2 * 0.45;
-  return blended * 0.5 + 0.5;
+  // Primary horizontal waves — slow, large-scale undulation
+  v += Math.sin(wx * 0.8 + wy * 0.15 + time * 1.0) * 0.20;
+  v += Math.sin(wx * 0.4 + wy * 0.3 + time * 0.7) * 0.18;
+  v += Math.sin(wx * 1.2 + wy * 0.1 + time * 1.4) * 0.14;
+
+  // Cross-ripples — slight diagonals that break perfect horizontality
+  v += Math.sin(wx * 0.6 - wy * 0.5 + time * 0.5) * 0.12;
+  v += Math.sin(wx * 1.5 + wy * 0.4 + time * 0.9 + 2.0) * 0.10;
+
+  // Fine surface detail
+  v += Math.sin(wx * 2.0 + wy * 0.2 + time * 1.8 + 1.0) * 0.08;
+  v += Math.sin(wx * 0.3 + wy * 0.8 + time * 0.35) * 0.07;
+
+  // Specular highlights — where crests catch light (bright peaks)
+  const spec = Math.sin(wx * 1.0 + time * 1.1) * Math.sin(wy * 0.5 + time * 0.55);
+  v += Math.max(0, spec) * 0.06;
+
+  // Second specular pass at different scale
+  const spec2 = Math.sin(wx * 0.5 + time * 0.6 + 3.0) * Math.sin(wy * 0.3 + time * 0.3 + 1.0);
+  v += Math.max(0, spec2) * 0.05;
+
+  return v * 0.5 + 0.5;
 }
 
 function NoiseBackground() {
@@ -97,7 +109,7 @@ function NoiseBackground() {
         const ny = y / oh;
         for (let x = 0; x < ow; x++) {
           const nx = x / ow;
-          const v = noise2d(nx * 4.0, ny * 4.0, time);
+          const v = waterSurface(nx, ny, time);
           const [r, g, b] = paletteAt(v);
           const i = (y * ow + x) * 4;
           data[i] = r;
@@ -112,7 +124,7 @@ function NoiseBackground() {
       ctx!.imageSmoothingQuality = "high";
       ctx!.drawImage(offscreen, 0, 0, canvas!.width, canvas!.height);
 
-      time += 0.008;
+      time += 0.006;
       animId = requestAnimationFrame(render);
     }
 
