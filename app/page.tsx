@@ -12,7 +12,7 @@ import { useEffect, useRef } from "react";
    ═══════════════════════════════════════════════════════════════ */
 
 const ZOOM = 0.6; // camera ratio — <1 zooms out (smaller, denser ripples)
-const TIME_STEP = 0.004; // gentle drift, a touch livelier
+const TIME_STEP = 0.008; // livelier horizontal drift
 
 // Venice palette: cool silver-blue shadow → pale neutral → warm cream → gold sparkle
 const W_DARK: [number, number, number] = [168, 177, 186];
@@ -42,12 +42,13 @@ function waterSurface(x: number, y: number, time: number): number {
   const v = (y * 32.0) / ZOOM;
   let sx = 0, sy = 0, p: number, c: number;
 
-  p = 0.6 * u + 1.0 * v + 0.8 * time; c = Math.cos(p); sx += 0.30 * 0.6 * c; sy += 0.30 * 1.0 * c;
-  p = 0.3 * u + 0.7 * v + 0.5 * time + 1.0; c = Math.cos(p); sx += 0.24 * 0.3 * c; sy += 0.24 * 0.7 * c;
-  p = 1.0 * u + 1.5 * v + 1.0 * time + 2.0; c = Math.cos(p); sx += 0.16 * 1.0 * c; sy += 0.16 * 1.5 * c;
-  p = 0.9 * u - 0.35 * v + 0.4 * time + 3.0; c = Math.cos(p); sx += 0.13 * 0.9 * c; sy += 0.13 * (-0.35) * c;
-  p = 0.15 * u + 0.25 * v + 0.2 * time + 4.0; c = Math.cos(p); sx += 0.20 * 0.15 * c; sy += 0.20 * 0.25 * c;
-  p = 1.4 * u + 1.9 * v + 1.3 * time + 5.0; c = Math.cos(p); sx += 0.07 * 1.4 * c; sy += 0.07 * 1.9 * c;
+  // v-dominant phases → horizontal ripple lines; tiny u term = gentle natural undulation
+  p = 0.06 * u + 1.0 * v + 0.8 * time; c = Math.cos(p); sx += 0.30 * 0.06 * c; sy += 0.30 * 1.0 * c;
+  p = 0.04 * u + 0.7 * v + 0.5 * time + 1.0; c = Math.cos(p); sx += 0.24 * 0.04 * c; sy += 0.24 * 0.7 * c;
+  p = 0.10 * u + 1.5 * v + 1.0 * time + 2.0; c = Math.cos(p); sx += 0.16 * 0.10 * c; sy += 0.16 * 1.5 * c;
+  p = 0.07 * u + 0.5 * v + 0.4 * time + 3.0; c = Math.cos(p); sx += 0.13 * 0.07 * c; sy += 0.13 * 0.5 * c;
+  p = 0.03 * u + 0.25 * v + 0.2 * time + 4.0; c = Math.cos(p); sx += 0.20 * 0.03 * c; sy += 0.20 * 0.25 * c;
+  p = 0.12 * u + 1.9 * v + 1.3 * time + 5.0; c = Math.cos(p); sx += 0.07 * 0.12 * c; sy += 0.07 * 1.9 * c;
 
   const nLen = Math.sqrt(sx * sx + sy * sy + 1.0);
   const dot = (-sx * 0.25 + -sy * 0.5 + 1.0) / (nLen * 1.14);
