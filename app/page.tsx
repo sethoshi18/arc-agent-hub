@@ -355,11 +355,11 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── 2. THE STACK (DARK — Architectural Diagram) ─────── */}
+      {/* ── 2. THE STACK (Architectural Diagram) ─────── */}
       <section
         style={{
           padding: "80px 24px",
-          background: "#2C2416",
+          background: "#EDE8DC",
           position: "relative",
           zIndex: 1,
         }}
@@ -371,7 +371,7 @@ export default function HomePage() {
               fontWeight: 700,
               fontSize: "clamp(1.5rem, 4vw, 2.5rem)",
               letterSpacing: "-0.03em",
-              color: "#F5F0E8",
+              color: "#1A1A1A",
               textAlign: "center",
               marginBottom: 8,
             }}
@@ -383,7 +383,7 @@ export default function HomePage() {
               fontFamily: "'IBM Plex Mono', monospace",
               fontSize: 11,
               letterSpacing: "0.1em",
-              color: "rgba(245,240,232,0.35)",
+              color: "#6B6560",
               textAlign: "center",
               textTransform: "uppercase",
               marginBottom: 48,
@@ -394,7 +394,7 @@ export default function HomePage() {
 
           {/* ── DEPLOY tier ── */}
           <div style={{ marginBottom: 4 }}>
-            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(201,165,90,0.4)", marginBottom: 8 }}>DEPLOY</div>
+            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "#A0722A", marginBottom: 8 }}>DEPLOY</div>
             <Link href="/factory" style={{ textDecoration: "none" }}>
               <div className="card card-hover" style={{ padding: "18px 22px", borderColor: "#C9A55A" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6, flexWrap: "wrap" }}>
@@ -411,12 +411,12 @@ export default function HomePage() {
 
           {/* Connector */}
           <div style={{ display: "flex", justifyContent: "center", padding: "8px 0" }}>
-            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 9, letterSpacing: "0.1em", color: "rgba(201,165,90,0.3)" }}>DEPLOYS TO ALL LAYERS ↓</span>
+            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 9, letterSpacing: "0.1em", color: "rgba(160,114,42,0.45)" }}>DEPLOYS TO ALL LAYERS ↓</span>
           </div>
 
           {/* ── GOVERN tier ── */}
           <div style={{ marginBottom: 4 }}>
-            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(201,165,90,0.4)", marginBottom: 8 }}>GOVERN</div>
+            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "#A0722A", marginBottom: 8 }}>GOVERN</div>
             <Link href="/dao" style={{ textDecoration: "none" }}>
               <div className="card card-hover" style={{ padding: "18px 22px" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6, flexWrap: "wrap" }}>
@@ -432,11 +432,11 @@ export default function HomePage() {
           </div>
 
           {/* Connector line */}
-          <div style={{ display: "flex", justifyContent: "center", padding: "4px 0" }}><div style={{ width: 1, height: 16, background: "rgba(201,165,90,0.2)" }} /></div>
+          <div style={{ display: "flex", justifyContent: "center", padding: "4px 0" }}><div style={{ width: 1, height: 16, background: "#D4C5A9" }} /></div>
 
           {/* ── TRUST tier ── */}
           <div style={{ marginBottom: 4 }}>
-            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(201,165,90,0.4)", marginBottom: 8 }}>TRUST</div>
+            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "#A0722A", marginBottom: 8 }}>TRUST</div>
             <Link href="/staking" style={{ textDecoration: "none" }}>
               <div className="card card-hover" style={{ padding: "18px 22px" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6, flexWrap: "wrap" }}>
@@ -452,11 +452,11 @@ export default function HomePage() {
           </div>
 
           {/* Connector line */}
-          <div style={{ display: "flex", justifyContent: "center", padding: "4px 0" }}><div style={{ width: 1, height: 16, background: "rgba(201,165,90,0.2)" }} /></div>
+          <div style={{ display: "flex", justifyContent: "center", padding: "4px 0" }}><div style={{ width: 1, height: 16, background: "#D4C5A9" }} /></div>
 
           {/* ── COMMERCE tier (2×2 grid) ── */}
           <div style={{ marginBottom: 4 }}>
-            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(201,165,90,0.4)", marginBottom: 8 }}>COMMERCE</div>
+            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "#A0722A", marginBottom: 8 }}>COMMERCE</div>
             <div className="arch-grid">
               <Link href="/rfps" style={{ textDecoration: "none" }}>
                 <div className="card card-hover" style={{ padding: "14px 18px", height: "100%" }}>
@@ -507,11 +507,11 @@ export default function HomePage() {
           </div>
 
           {/* Connector line */}
-          <div style={{ display: "flex", justifyContent: "center", padding: "4px 0" }}><div style={{ width: 1, height: 16, background: "rgba(201,165,90,0.2)" }} /></div>
+          <div style={{ display: "flex", justifyContent: "center", padding: "4px 0" }}><div style={{ width: 1, height: 16, background: "#D4C5A9" }} /></div>
 
           {/* ── IDENTITY tier (foundation) ── */}
           <div>
-            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(201,165,90,0.4)", marginBottom: 8 }}>IDENTITY</div>
+            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "#A0722A", marginBottom: 8 }}>IDENTITY</div>
             <Link href="/agents" style={{ textDecoration: "none" }}>
               <div className="card card-hover" style={{ padding: "18px 22px", textAlign: "center" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 10, justifyContent: "center", marginBottom: 6, flexWrap: "wrap" }}>
@@ -527,12 +527,12 @@ export default function HomePage() {
           </div>
 
           {/* Base infrastructure */}
-          <div style={{ display: "flex", justifyContent: "center", gap: 24, marginTop: 20, paddingTop: 16, borderTop: "1px solid rgba(212,197,169,0.1)", flexWrap: "wrap" }}>
-            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, fontWeight: 500, letterSpacing: "0.06em", color: "rgba(245,240,232,0.25)" }}>ARC NETWORK</span>
-            <span style={{ color: "rgba(212,197,169,0.15)" }}>·</span>
-            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, fontWeight: 500, letterSpacing: "0.06em", color: "rgba(245,240,232,0.25)" }}>USDC NATIVE</span>
-            <span style={{ color: "rgba(212,197,169,0.15)" }}>·</span>
-            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, fontWeight: 500, letterSpacing: "0.06em", color: "rgba(245,240,232,0.25)" }}>CHAIN ID 5042002</span>
+          <div style={{ display: "flex", justifyContent: "center", gap: 24, marginTop: 20, paddingTop: 16, borderTop: "1px solid #D4C5A9", flexWrap: "wrap" }}>
+            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, fontWeight: 500, letterSpacing: "0.06em", color: "#6B6560" }}>ARC NETWORK</span>
+            <span style={{ color: "#D4C5A9" }}>·</span>
+            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, fontWeight: 500, letterSpacing: "0.06em", color: "#6B6560" }}>USDC NATIVE</span>
+            <span style={{ color: "#D4C5A9" }}>·</span>
+            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, fontWeight: 500, letterSpacing: "0.06em", color: "#6B6560" }}>CHAIN ID 5042002</span>
           </div>
         </div>
       </section>
