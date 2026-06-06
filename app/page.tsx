@@ -10,11 +10,11 @@ import { useEffect, useRef } from "react";
    ═══════════════════════════════════════════════════════════════ */
 
 const PALETTE: [number, number, number][] = [
-  [222, 215, 200], // warm shadow (trough)
-  [232, 225, 212], // warm mid
+  [195, 185, 168], // deep warm shadow (trough)
+  [218, 210, 195], // warm mid
   [245, 240, 232], // cream base (dominant)
-  [248, 243, 233], // light cream (crest)
-  [242, 230, 205], // warm gold highlight (sunlight catch)
+  [255, 250, 242], // bright highlight (crest)
+  [245, 225, 188], // warm gold shimmer (sunlight catch)
 ];
 
 function lerpColor(
