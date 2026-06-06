@@ -213,7 +213,7 @@ input::placeholder, textarea::placeholder {
   body.menu-open { overflow: hidden; }
 }
 
-/* ── Layer stack cards ───────────────────────────────────────── */
+/* ── Layer stack cards (legacy — used on other pages) ─────────── */
 .layer-card {
   display: grid;
   grid-template-columns: 40px 1fr auto;
@@ -232,6 +232,16 @@ input::placeholder, textarea::placeholder {
   }
   .layer-addr-desktop { display: none !important; }
   .layer-addr-mobile { display: inline-block !important; margin-top: 8px; }
+}
+
+/* ── Landing page — stack rows (dark section) ────────────────── */
+.stack-row:hover {
+  background: rgba(245, 240, 232, 0.06);
+}
+
+/* ── Landing page — repo list ────────────────────────────────── */
+.repo-row:hover {
+  background: rgba(160, 114, 42, 0.06);
 }
 
 /* ── Mobile responsive — inner pages ─────────────────────────── */
@@ -274,7 +284,7 @@ input::placeholder, textarea::placeholder {
     overflow-wrap: break-word !important;
   }
 
-  /* FIX 1: Hero subtitle — prevent hyphenation on body text */
+  /* Hero subtitle — prevent hyphenation */
   .hero-subtitle {
     hyphens: none !important;
     word-break: normal !important;
@@ -282,18 +292,45 @@ input::placeholder, textarea::placeholder {
     overflow-wrap: normal !important;
   }
 
-  /* FIX 2: Flow grid — last odd item spans full width */
-  .flow-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-  .flow-grid > :last-child:nth-child(odd) {
-    grid-column: 1 / -1;
-  }
-
-  /* FIX 3: Hero top padding — reduce on mobile */
+  /* Hero top padding — reduce on mobile */
   .hero-section {
     padding-top: 56px !important;
     padding-bottom: 56px !important;
+  }
+
+  /* Landing page — stack rows on mobile */
+  .stack-row {
+    grid-template-columns: 32px 1fr !important;
+  }
+  .stack-addr {
+    display: none !important;
+  }
+
+  /* Landing page — flow strip on mobile */
+  .flow-strip {
+    grid-template-columns: 1fr !important;
+  }
+  .flow-step {
+    border-right: none !important;
+    border-bottom: 1px solid #D4C5A9;
+    padding: 0 0 28px 0 !important;
+  }
+  .flow-step:last-child {
+    border-bottom: none;
+    padding-bottom: 0 !important;
+  }
+
+  /* Landing page — developer section on mobile */
+  .dev-section {
+    grid-template-columns: 1fr !important;
+  }
+  .repo-desc {
+    display: none !important;
+  }
+
+  /* Landing page — hero stats on mobile */
+  .hero-stats {
+    gap: 24px !important;
   }
 
   .card[style*="padding: 28px"],
