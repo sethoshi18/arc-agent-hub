@@ -10,11 +10,11 @@ import { useEffect, useRef } from "react";
    ═══════════════════════════════════════════════════════════════ */
 
 const PALETTE: [number, number, number][] = [
-  [245, 235, 210], // warm cream (dominant)
-  [180, 210, 240], // soft blue
-  [190, 170, 230], // soft violet
-  [210, 235, 210], // soft mint
-  [240, 210, 180], // warm apricot
+  [245, 240, 232], // warm cream (dominant — #F5F0E8)
+  [237, 232, 220], // warm sand (#EDE8DC)
+  [220, 200, 165], // light gold
+  [235, 220, 195], // soft wheat
+  [210, 190, 155], // warm amber
 ];
 
 function lerpColor(
@@ -112,7 +112,7 @@ function NoiseBackground() {
       ctx!.imageSmoothingQuality = "high";
       ctx!.drawImage(offscreen, 0, 0, canvas!.width, canvas!.height);
 
-      time += 0.004;
+      time += 0.008;
       animId = requestAnimationFrame(render);
     }
 
