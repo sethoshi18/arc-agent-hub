@@ -746,7 +746,7 @@ export default function HomePage() {
       <section
         style={{
           padding: "80px 24px",
-          background: "#2C2416",
+          background: "#1152C6",
           position: "relative",
           zIndex: 1,
           textAlign: "center",
@@ -797,10 +797,12 @@ export default function HomePage() {
               letterSpacing: "0.02em",
               padding: "12px 32px",
               borderRadius: 6,
-              background: "#C9A55A",
-              color: "#2C2416",
+              background: "rgba(255,255,255,0.12)",
+              color: "#FFFFFF",
               textDecoration: "none",
               transition: "background 0.15s ease",
+              border: "1.5px solid rgba(255,255,255,0.3)",
+              backdropFilter: "blur(6px)",
             }}
           >
             Launch the Factory
