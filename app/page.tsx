@@ -12,7 +12,7 @@ import { useEffect, useRef } from "react";
    ═══════════════════════════════════════════════════════════════ */
 
 const ZOOM = 0.6; // camera ratio — <1 zooms out (smaller, denser ripples)
-const TIME_STEP = 0.0025; // slow, dramatic drift
+const TIME_STEP = 0.004; // gentle drift, a touch livelier
 
 // Venice palette: cool silver-blue shadow → pale neutral → warm cream → gold sparkle
 const W_DARK: [number, number, number] = [168, 177, 186];
