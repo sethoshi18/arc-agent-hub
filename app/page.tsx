@@ -1,176 +1,20 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef } from "react";
 
 /* ═══════════════════════════════════════════════════════════════
-   WATER SURFACE BACKGROUND
-   Slope-based water rendering — brightness from wave surface angle
-   reflecting light, creating visible horizontal ripple lines with
-   specular highlights. Inspired by Venice AI. Pure canvas, zero deps.
+   VIDEO BACKGROUND
+   Warm sparkling-water loop, generated to match the design system.
+   Standard hero-video pattern: autoplay, muted, looped, object-fit cover.
+   A soft cream scrim keeps the dark hero text readable over the shimmer.
    ═══════════════════════════════════════════════════════════════ */
 
-const WATER_DARK: [number, number, number] = [188, 180, 162];  // warm trough
-const WATER_MID: [number, number, number] = [222, 215, 200];   // warm mid
-const WATER_LIGHT: [number, number, number] = [248, 244, 236]; // cream crest
-const WATER_SPEC: [number, number, number] = [255, 248, 228];  // gold specular
+const WATER_VIDEO_SRC =
+  "https://pub.hyperagent.com/api/published/pbf01KTDKXRXP_ZM241B901PH3C74C/1d33962b-294c-43cb-a354-831b274871db.mp4";
 
-function waterColor(brightness: number): [number, number, number] {
-  // Custom ramp: dark → mid → light → specular
-  let r: number, g: number, b: number;
-  if (brightness < 0.35) {
-    const t = brightness / 0.35;
-    r = WATER_DARK[0] + (WATER_MID[0] - WATER_DARK[0]) * t;
-    g = WATER_DARK[1] + (WATER_MID[1] - WATER_DARK[1]) * t;
-    b = WATER_DARK[2] + (WATER_MID[2] - WATER_DARK[2]) * t;
-  } else if (brightness < 0.7) {
-    const t = (brightness - 0.35) / 0.35;
-    r = WATER_MID[0] + (WATER_LIGHT[0] - WATER_MID[0]) * t;
-    g = WATER_MID[1] + (WATER_LIGHT[1] - WATER_MID[1]) * t;
-    b = WATER_MID[2] + (WATER_LIGHT[2] - WATER_MID[2]) * t;
-  } else {
-    const t = (brightness - 0.7) / 0.3;
-    r = WATER_LIGHT[0] + (WATER_SPEC[0] - WATER_LIGHT[0]) * t;
-    g = WATER_LIGHT[1] + (WATER_SPEC[1] - WATER_LIGHT[1]) * t;
-    b = WATER_LIGHT[2] + (WATER_SPEC[2] - WATER_LIGHT[2]) * t;
-  }
-  return [r, g, b];
-}
-
-/**
- * Water surface — uses wave SLOPE (derivative) to compute light reflection.
- * This creates visible ripple lines because crests and troughs have different
- * surface angles, just like real water. Analytical derivatives (cosine) so
- * each pixel needs only one pass.
- */
-function waterSurface(x: number, y: number, time: number): number {
-  const u = x * 10.0;
-  const v = y * 50.0; // high Y frequency = visible horizontal ripple lines
-
-  // Compute wave slopes via analytical derivatives (d/dx of sin = cos)
-  let sx = 0, sy = 0;
-  let p: number, c: number;
-
-  // Wave 1: dominant horizontal ripple
-  p = 0.6 * u + 1.0 * v + 0.8 * time;
-  c = Math.cos(p);
-  sx += 0.32 * 0.6 * c;
-  sy += 0.32 * 1.0 * c;
-
-  // Wave 2: secondary ripple at different angle
-  p = 0.3 * u + 0.7 * v + 0.5 * time + 1.0;
-  c = Math.cos(p);
-  sx += 0.26 * 0.3 * c;
-  sy += 0.26 * 0.7 * c;
-
-  // Wave 3: fine detail ripple
-  p = 1.0 * u + 1.6 * v + 1.1 * time + 2.0;
-  c = Math.cos(p);
-  sx += 0.18 * 1.0 * c;
-  sy += 0.18 * 1.6 * c;
-
-  // Wave 4: cross-ripple (breaks perfect horizontality)
-  p = 0.9 * u - 0.35 * v + 0.4 * time + 3.0;
-  c = Math.cos(p);
-  sx += 0.14 * 0.9 * c;
-  sy += 0.14 * (-0.35) * c;
-
-  // Wave 5: large slow undulation
-  p = 0.15 * u + 0.25 * v + 0.2 * time + 4.0;
-  c = Math.cos(p);
-  sx += 0.20 * 0.15 * c;
-  sy += 0.20 * 0.25 * c;
-
-  // Wave 6: very fine shimmer
-  p = 1.5 * u + 2.2 * v + 1.5 * time + 5.0;
-  c = Math.cos(p);
-  sx += 0.10 * 1.5 * c;
-  sy += 0.10 * 2.2 * c;
-
-  // Light direction (from upper-right — creates diagonal highlight streaks)
-  const nLen = Math.sqrt(sx * sx + sy * sy + 1.0);
-  const dot = (-sx * 0.25 + -sy * 0.5 + 1.0) / (nLen * 1.14);
-
-  // Specular highlight (sharp bright spots where wave angle reflects light)
-  const spec = Math.pow(Math.max(0, dot), 20.0);
-
-  // Final brightness: ambient + diffuse reflection + specular
-  const val = 0.2 + Math.max(0, dot) * 0.5 + spec * 0.3;
-
-  return Math.max(0, Math.min(1, val));
-}
-
-function NoiseBackground() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext("2d", { alpha: false });
-    if (!ctx) return;
-
-    const SCALE = 4; // 1/4 resolution for crisp ripple detail
-    let offscreen: HTMLCanvasElement;
-    let offCtx: CanvasRenderingContext2D;
-    let imgData: ImageData;
-    let ow = 0, oh = 0;
-    let time = 0;
-    let animId = 0;
-
-    function resize() {
-      const w = window.innerWidth;
-      const h = window.innerHeight;
-      canvas!.width = w;
-      canvas!.height = h;
-      ow = Math.ceil(w / SCALE);
-      oh = Math.ceil(h / SCALE);
-
-      offscreen = document.createElement("canvas");
-      offscreen.width = ow;
-      offscreen.height = oh;
-      offCtx = offscreen.getContext("2d", { alpha: false })!;
-      imgData = offCtx.createImageData(ow, oh);
-    }
-
-    function render() {
-      const data = imgData.data;
-      for (let y = 0; y < oh; y++) {
-        const ny = y / oh;
-        for (let x = 0; x < ow; x++) {
-          const nx = x / ow;
-          const brightness = waterSurface(nx, ny, time);
-          const [r, g, b] = waterColor(brightness);
-          const i = (y * ow + x) * 4;
-          data[i] = r;
-          data[i + 1] = g;
-          data[i + 2] = b;
-          data[i + 3] = 255;
-        }
-      }
-      offCtx.putImageData(imgData, 0, 0);
-
-      ctx!.imageSmoothingEnabled = true;
-      ctx!.imageSmoothingQuality = "high";
-      ctx!.drawImage(offscreen, 0, 0, canvas!.width, canvas!.height);
-
-      time += 0.006;
-      animId = requestAnimationFrame(render);
-    }
-
-    resize();
-    render();
-    window.addEventListener("resize", resize);
-
-    return () => {
-      cancelAnimationFrame(animId);
-      window.removeEventListener("resize", resize);
-    };
-  }, []);
-
+function VideoBackground() {
   return (
-    <canvas
-      ref={canvasRef}
+    <div
       style={{
         position: "fixed",
         top: 0,
@@ -179,8 +23,38 @@ function NoiseBackground() {
         height: "100%",
         zIndex: -1,
         pointerEvents: "none",
+        overflow: "hidden",
+        background: "#F5F0E8",
       }}
-    />
+    >
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="auto"
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+        }}
+      >
+        <source src={WATER_VIDEO_SRC} type="video/mp4" />
+      </video>
+
+      {/* Warm scrim — keeps dark hero text readable over the shimmer */}
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          background:
+            "linear-gradient(180deg, rgba(245,240,232,0.30) 0%, rgba(245,240,232,0.55) 100%)",
+        }}
+      />
+    </div>
   );
 }
 
@@ -217,7 +91,7 @@ const REPOS = [
 export default function HomePage() {
   return (
     <main style={{ minHeight: "100vh", position: "relative" }}>
-      <NoiseBackground />
+      <VideoBackground />
 
       {/* ── 1. HERO ────────────────────────────────────────────── */}
       <section
