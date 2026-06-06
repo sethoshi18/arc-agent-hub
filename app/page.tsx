@@ -5,69 +5,99 @@ import { useEffect, useRef } from "react";
 
 /* ═══════════════════════════════════════════════════════════════
    WATER SURFACE BACKGROUND
-   Gentle horizontal ripples with warm highlights — like sunlight
-   on calm water. Pure vanilla Canvas, zero dependencies.
+   Slope-based water rendering — brightness from wave surface angle
+   reflecting light, creating visible horizontal ripple lines with
+   specular highlights. Inspired by Venice AI. Pure canvas, zero deps.
    ═══════════════════════════════════════════════════════════════ */
 
-const PALETTE: [number, number, number][] = [
-  [195, 185, 168], // deep warm shadow (trough)
-  [218, 210, 195], // warm mid
-  [245, 240, 232], // cream base (dominant)
-  [255, 250, 242], // bright highlight (crest)
-  [245, 225, 188], // warm gold shimmer (sunlight catch)
-];
+const WATER_DARK: [number, number, number] = [188, 180, 162];  // warm trough
+const WATER_MID: [number, number, number] = [222, 215, 200];   // warm mid
+const WATER_LIGHT: [number, number, number] = [248, 244, 236]; // cream crest
+const WATER_SPEC: [number, number, number] = [255, 248, 228];  // gold specular
 
-function lerpColor(
-  a: [number, number, number],
-  b: [number, number, number],
-  t: number,
-): [number, number, number] {
-  return [
-    a[0] + (b[0] - a[0]) * t,
-    a[1] + (b[1] - a[1]) * t,
-    a[2] + (b[2] - a[2]) * t,
-  ];
+function waterColor(brightness: number): [number, number, number] {
+  // Custom ramp: dark → mid → light → specular
+  let r: number, g: number, b: number;
+  if (brightness < 0.35) {
+    const t = brightness / 0.35;
+    r = WATER_DARK[0] + (WATER_MID[0] - WATER_DARK[0]) * t;
+    g = WATER_DARK[1] + (WATER_MID[1] - WATER_DARK[1]) * t;
+    b = WATER_DARK[2] + (WATER_MID[2] - WATER_DARK[2]) * t;
+  } else if (brightness < 0.7) {
+    const t = (brightness - 0.35) / 0.35;
+    r = WATER_MID[0] + (WATER_LIGHT[0] - WATER_MID[0]) * t;
+    g = WATER_MID[1] + (WATER_LIGHT[1] - WATER_MID[1]) * t;
+    b = WATER_MID[2] + (WATER_LIGHT[2] - WATER_MID[2]) * t;
+  } else {
+    const t = (brightness - 0.7) / 0.3;
+    r = WATER_LIGHT[0] + (WATER_SPEC[0] - WATER_LIGHT[0]) * t;
+    g = WATER_LIGHT[1] + (WATER_SPEC[1] - WATER_LIGHT[1]) * t;
+    b = WATER_LIGHT[2] + (WATER_SPEC[2] - WATER_LIGHT[2]) * t;
+  }
+  return [r, g, b];
 }
 
-function paletteAt(v: number): [number, number, number] {
-  const clamped = Math.max(0, Math.min(1, v));
-  const seg = clamped * (PALETTE.length - 1);
-  const i = Math.floor(seg);
-  const t = seg - i;
-  if (i >= PALETTE.length - 1) return PALETTE[PALETTE.length - 1];
-  return lerpColor(PALETTE[i], PALETTE[i + 1], t);
-}
-
-/** Water surface — layered horizontal waves with specular highlights */
+/**
+ * Water surface — uses wave SLOPE (derivative) to compute light reflection.
+ * This creates visible ripple lines because crests and troughs have different
+ * surface angles, just like real water. Analytical derivatives (cosine) so
+ * each pixel needs only one pass.
+ */
 function waterSurface(x: number, y: number, time: number): number {
-  // Stretch x (wide ripples) and compress y (thin ripple lines)
-  const wx = x * 8.0;
-  const wy = y * 3.0;
+  const u = x * 10.0;
+  const v = y * 50.0; // high Y frequency = visible horizontal ripple lines
 
-  let v = 0;
+  // Compute wave slopes via analytical derivatives (d/dx of sin = cos)
+  let sx = 0, sy = 0;
+  let p: number, c: number;
 
-  // Primary horizontal waves — slow, large-scale undulation
-  v += Math.sin(wx * 0.8 + wy * 0.15 + time * 1.0) * 0.20;
-  v += Math.sin(wx * 0.4 + wy * 0.3 + time * 0.7) * 0.18;
-  v += Math.sin(wx * 1.2 + wy * 0.1 + time * 1.4) * 0.14;
+  // Wave 1: dominant horizontal ripple
+  p = 0.6 * u + 1.0 * v + 0.8 * time;
+  c = Math.cos(p);
+  sx += 0.32 * 0.6 * c;
+  sy += 0.32 * 1.0 * c;
 
-  // Cross-ripples — slight diagonals that break perfect horizontality
-  v += Math.sin(wx * 0.6 - wy * 0.5 + time * 0.5) * 0.12;
-  v += Math.sin(wx * 1.5 + wy * 0.4 + time * 0.9 + 2.0) * 0.10;
+  // Wave 2: secondary ripple at different angle
+  p = 0.3 * u + 0.7 * v + 0.5 * time + 1.0;
+  c = Math.cos(p);
+  sx += 0.26 * 0.3 * c;
+  sy += 0.26 * 0.7 * c;
 
-  // Fine surface detail
-  v += Math.sin(wx * 2.0 + wy * 0.2 + time * 1.8 + 1.0) * 0.08;
-  v += Math.sin(wx * 0.3 + wy * 0.8 + time * 0.35) * 0.07;
+  // Wave 3: fine detail ripple
+  p = 1.0 * u + 1.6 * v + 1.1 * time + 2.0;
+  c = Math.cos(p);
+  sx += 0.18 * 1.0 * c;
+  sy += 0.18 * 1.6 * c;
 
-  // Specular highlights — where crests catch light (bright peaks)
-  const spec = Math.sin(wx * 1.0 + time * 1.1) * Math.sin(wy * 0.5 + time * 0.55);
-  v += Math.max(0, spec) * 0.06;
+  // Wave 4: cross-ripple (breaks perfect horizontality)
+  p = 0.9 * u - 0.35 * v + 0.4 * time + 3.0;
+  c = Math.cos(p);
+  sx += 0.14 * 0.9 * c;
+  sy += 0.14 * (-0.35) * c;
 
-  // Second specular pass at different scale
-  const spec2 = Math.sin(wx * 0.5 + time * 0.6 + 3.0) * Math.sin(wy * 0.3 + time * 0.3 + 1.0);
-  v += Math.max(0, spec2) * 0.05;
+  // Wave 5: large slow undulation
+  p = 0.15 * u + 0.25 * v + 0.2 * time + 4.0;
+  c = Math.cos(p);
+  sx += 0.20 * 0.15 * c;
+  sy += 0.20 * 0.25 * c;
 
-  return v * 0.5 + 0.5;
+  // Wave 6: very fine shimmer
+  p = 1.5 * u + 2.2 * v + 1.5 * time + 5.0;
+  c = Math.cos(p);
+  sx += 0.10 * 1.5 * c;
+  sy += 0.10 * 2.2 * c;
+
+  // Light direction (from upper-right — creates diagonal highlight streaks)
+  const nLen = Math.sqrt(sx * sx + sy * sy + 1.0);
+  const dot = (-sx * 0.25 + -sy * 0.5 + 1.0) / (nLen * 1.14);
+
+  // Specular highlight (sharp bright spots where wave angle reflects light)
+  const spec = Math.pow(Math.max(0, dot), 20.0);
+
+  // Final brightness: ambient + diffuse reflection + specular
+  const val = 0.2 + Math.max(0, dot) * 0.5 + spec * 0.3;
+
+  return Math.max(0, Math.min(1, val));
 }
 
 function NoiseBackground() {
@@ -80,7 +110,7 @@ function NoiseBackground() {
     const ctx = canvas.getContext("2d", { alpha: false });
     if (!ctx) return;
 
-    const SCALE = 6;
+    const SCALE = 4; // 1/4 resolution for crisp ripple detail
     let offscreen: HTMLCanvasElement;
     let offCtx: CanvasRenderingContext2D;
     let imgData: ImageData;
@@ -109,8 +139,8 @@ function NoiseBackground() {
         const ny = y / oh;
         for (let x = 0; x < ow; x++) {
           const nx = x / ow;
-          const v = waterSurface(nx, ny, time);
-          const [r, g, b] = paletteAt(v);
+          const brightness = waterSurface(nx, ny, time);
+          const [r, g, b] = waterColor(brightness);
           const i = (y * ow + x) * 4;
           data[i] = r;
           data[i + 1] = g;
