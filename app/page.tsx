@@ -1,18 +1,124 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useRef } from "react";
 
 /* ═══════════════════════════════════════════════════════════════
-   VIDEO BACKGROUND
-   Warm sparkling-water loop, generated to match the design system.
-   Standard hero-video pattern: autoplay, muted, looped, object-fit cover.
-   A soft cream scrim keeps the dark hero text readable over the shimmer.
+   WATER BACKGROUND
+   Slope-based water shader: light reflects off wave surface angles,
+   producing real ripple lines + sparkle (not flat color blobs).
+   Venice-style palette — cool silvery troughs, warm champagne/gold
+   crests. Zoomed out (0.6), slow dramatic drift.
    ═══════════════════════════════════════════════════════════════ */
 
-const WATER_VIDEO_SRC =
-  "https://pub.hyperagent.com/api/published/pbf01KTDKXRXP_ZM241B901PH3C74C/1d33962b-294c-43cb-a354-831b274871db.mp4";
+const ZOOM = 0.6; // camera ratio — <1 zooms out (smaller, denser ripples)
+const TIME_STEP = 0.0025; // slow, dramatic drift
 
-function VideoBackground() {
+// Venice palette: cool silver-blue shadow → pale neutral → warm cream → gold sparkle
+const W_DARK: [number, number, number] = [168, 177, 186];
+const W_MID: [number, number, number] = [212, 211, 203];
+const W_LIGHT: [number, number, number] = [240, 233, 220];
+const W_SPEC: [number, number, number] = [255, 250, 233];
+
+function waterColor(b: number): [number, number, number] {
+  let a: [number, number, number], c: [number, number, number], t: number;
+  if (b < 0.4) {
+    a = W_DARK; c = W_MID; t = b / 0.4;
+  } else if (b < 0.72) {
+    a = W_MID; c = W_LIGHT; t = (b - 0.4) / 0.32;
+  } else {
+    a = W_LIGHT; c = W_SPEC; t = (b - 0.72) / 0.28;
+  }
+  return [
+    a[0] + (c[0] - a[0]) * t,
+    a[1] + (c[1] - a[1]) * t,
+    a[2] + (c[2] - a[2]) * t,
+  ];
+}
+
+/** Wave slope (analytical cosine derivatives) → light-reflection brightness. */
+function waterSurface(x: number, y: number, time: number): number {
+  const u = (x * 8.0) / ZOOM;
+  const v = (y * 32.0) / ZOOM;
+  let sx = 0, sy = 0, p: number, c: number;
+
+  p = 0.6 * u + 1.0 * v + 0.8 * time; c = Math.cos(p); sx += 0.30 * 0.6 * c; sy += 0.30 * 1.0 * c;
+  p = 0.3 * u + 0.7 * v + 0.5 * time + 1.0; c = Math.cos(p); sx += 0.24 * 0.3 * c; sy += 0.24 * 0.7 * c;
+  p = 1.0 * u + 1.5 * v + 1.0 * time + 2.0; c = Math.cos(p); sx += 0.16 * 1.0 * c; sy += 0.16 * 1.5 * c;
+  p = 0.9 * u - 0.35 * v + 0.4 * time + 3.0; c = Math.cos(p); sx += 0.13 * 0.9 * c; sy += 0.13 * (-0.35) * c;
+  p = 0.15 * u + 0.25 * v + 0.2 * time + 4.0; c = Math.cos(p); sx += 0.20 * 0.15 * c; sy += 0.20 * 0.25 * c;
+  p = 1.4 * u + 1.9 * v + 1.3 * time + 5.0; c = Math.cos(p); sx += 0.07 * 1.4 * c; sy += 0.07 * 1.9 * c;
+
+  const nLen = Math.sqrt(sx * sx + sy * sy + 1.0);
+  const dot = (-sx * 0.25 + -sy * 0.5 + 1.0) / (nLen * 1.14);
+  const spec = Math.pow(Math.max(0, dot), 20.0);
+  const val = 0.25 + Math.max(0, dot) * 0.5 + spec * 0.3;
+  return Math.max(0, Math.min(1, val));
+}
+
+function WaterBackground() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d", { alpha: false });
+    if (!ctx) return;
+
+    const SCALE = 3; // 1/3 resolution — crisp ripple detail without aliasing
+    let offscreen: HTMLCanvasElement;
+    let offCtx: CanvasRenderingContext2D;
+    let imgData: ImageData;
+    let ow = 0, oh = 0;
+    let time = 0;
+    let animId = 0;
+
+    function resize() {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      canvas!.width = w;
+      canvas!.height = h;
+      ow = Math.ceil(w / SCALE);
+      oh = Math.ceil(h / SCALE);
+      offscreen = document.createElement("canvas");
+      offscreen.width = ow;
+      offscreen.height = oh;
+      offCtx = offscreen.getContext("2d", { alpha: false })!;
+      imgData = offCtx.createImageData(ow, oh);
+    }
+
+    function render() {
+      const data = imgData.data;
+      for (let y = 0; y < oh; y++) {
+        const ny = y / oh;
+        for (let x = 0; x < ow; x++) {
+          const nx = x / ow;
+          const b = waterSurface(nx, ny, time);
+          const [r, g, bl] = waterColor(b);
+          const i = (y * ow + x) * 4;
+          data[i] = r;
+          data[i + 1] = g;
+          data[i + 2] = bl;
+          data[i + 3] = 255;
+        }
+      }
+      offCtx.putImageData(imgData, 0, 0);
+      ctx!.imageSmoothingEnabled = true;
+      ctx!.imageSmoothingQuality = "high";
+      ctx!.drawImage(offscreen, 0, 0, canvas!.width, canvas!.height);
+      time += TIME_STEP;
+      animId = requestAnimationFrame(render);
+    }
+
+    resize();
+    render();
+    window.addEventListener("resize", resize);
+    return () => {
+      cancelAnimationFrame(animId);
+      window.removeEventListener("resize", resize);
+    };
+  }, []);
+
   return (
     <div
       style={{
@@ -23,35 +129,19 @@ function VideoBackground() {
         height: "100%",
         zIndex: -1,
         pointerEvents: "none",
-        overflow: "hidden",
-        background: "#F5F0E8",
       }}
     >
-      <video
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="auto"
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          objectFit: "cover",
-        }}
-      >
-        <source src={WATER_VIDEO_SRC} type="video/mp4" />
-      </video>
-
-      {/* Warm scrim — keeps dark hero text readable over the shimmer */}
+      <canvas
+        ref={canvasRef}
+        style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}
+      />
+      {/* Soft cream scrim — keeps dark hero text readable over the shimmer */}
       <div
         style={{
           position: "absolute",
           inset: 0,
           background:
-            "linear-gradient(180deg, rgba(245,240,232,0.30) 0%, rgba(245,240,232,0.55) 100%)",
+            "linear-gradient(180deg, rgba(245,240,232,0.18) 0%, rgba(245,240,232,0.38) 100%)",
         }}
       />
     </div>
@@ -91,7 +181,7 @@ const REPOS = [
 export default function HomePage() {
   return (
     <main style={{ minHeight: "100vh", position: "relative" }}>
-      <VideoBackground />
+      <WaterBackground />
 
       {/* ── 1. HERO ────────────────────────────────────────────── */}
       <section
