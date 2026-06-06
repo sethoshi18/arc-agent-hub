@@ -355,7 +355,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── 2. THE STACK (DARK) ────────────────────────────────── */}
+      {/* ── 2. THE STACK (DARK — Architectural Diagram) ─────── */}
       <section
         style={{
           padding: "80px 24px",
@@ -373,108 +373,166 @@ export default function HomePage() {
               letterSpacing: "-0.03em",
               color: "#F5F0E8",
               textAlign: "center",
-              marginBottom: 48,
+              marginBottom: 8,
             }}
           >
             Eight layers, one stack
           </h2>
+          <p
+            style={{
+              fontFamily: "'IBM Plex Mono', monospace",
+              fontSize: 11,
+              letterSpacing: "0.1em",
+              color: "rgba(245,240,232,0.35)",
+              textAlign: "center",
+              textTransform: "uppercase",
+              marginBottom: 48,
+            }}
+          >
+            ARC AGENTIC COMMERCE PROTOCOL
+          </p>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-            {LAYERS.map((layer) => (
-              <Link
-                key={layer.n}
-                href={layer.href}
-                style={{ textDecoration: "none" }}
-              >
-                <div
-                  className="stack-row"
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "36px 1fr auto",
-                    alignItems: "center",
-                    gap: 16,
-                    padding: "14px 20px",
-                    borderRadius: 6,
-                    transition: "background 0.15s ease",
-                  }}
-                >
-                  {/* Number */}
-                  <span
-                    style={{
-                      fontFamily: "'Inter', sans-serif",
-                      fontWeight: 900,
-                      fontSize: 18,
-                      color: "#C9A55A",
-                      lineHeight: 1,
-                    }}
-                  >
-                    {layer.n}
-                  </span>
+          {/* ── DEPLOY tier ── */}
+          <div style={{ marginBottom: 4 }}>
+            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(201,165,90,0.4)", marginBottom: 8 }}>DEPLOY</div>
+            <Link href="/factory" style={{ textDecoration: "none" }}>
+              <div className="card card-hover" style={{ padding: "18px 22px", borderColor: "#C9A55A" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6, flexWrap: "wrap" }}>
+                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, fontWeight: 600, color: "#A0722A", background: "rgba(160,114,42,0.08)", border: "1px solid rgba(160,114,42,0.2)", borderRadius: 4, padding: "2px 8px" }}>L8</span>
+                  <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 15, color: "#1A1A1A" }}>AgentFactory</span>
+                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, color: "#6B6560" }}>One-click deployment</span>
+                </div>
+                <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, lineHeight: 1.5, color: "#3D3530", margin: 0 }}>
+                  Deploy a fully configured agent across all layers in a single transaction. Template registry for agent archetypes.
+                </p>
+              </div>
+            </Link>
+          </div>
 
-                  {/* Name + desc */}
-                  <div>
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 8,
-                        marginBottom: 2,
-                      }}
-                    >
-                      <span
-                        style={{
-                          fontFamily: "'Inter', sans-serif",
-                          fontWeight: 600,
-                          fontSize: 14,
-                          color: "#F5F0E8",
-                        }}
-                      >
-                        {layer.label}
-                      </span>
-                      <span
-                        style={{
-                          fontFamily: "'IBM Plex Mono', monospace",
-                          fontSize: 10,
-                          fontWeight: 500,
-                          letterSpacing: "0.04em",
-                          color: "#C9A55A",
-                          background: "rgba(201,165,90,0.1)",
-                          border: "1px solid rgba(201,165,90,0.2)",
-                          borderRadius: 99,
-                          padding: "2px 8px",
-                        }}
-                      >
-                        {layer.standard}
-                      </span>
-                    </div>
-                    <p
-                      style={{
-                        fontFamily: "'Inter', sans-serif",
-                        fontSize: 13,
-                        lineHeight: 1.5,
-                        color: "rgba(245,240,232,0.55)",
-                        margin: 0,
-                      }}
-                    >
-                      {layer.desc}
-                    </p>
+          {/* Connector */}
+          <div style={{ display: "flex", justifyContent: "center", padding: "8px 0" }}>
+            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 9, letterSpacing: "0.1em", color: "rgba(201,165,90,0.3)" }}>DEPLOYS TO ALL LAYERS ↓</span>
+          </div>
+
+          {/* ── GOVERN tier ── */}
+          <div style={{ marginBottom: 4 }}>
+            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(201,165,90,0.4)", marginBottom: 8 }}>GOVERN</div>
+            <Link href="/dao" style={{ textDecoration: "none" }}>
+              <div className="card card-hover" style={{ padding: "18px 22px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6, flexWrap: "wrap" }}>
+                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, fontWeight: 600, color: "#A0722A", background: "rgba(160,114,42,0.08)", border: "1px solid rgba(160,114,42,0.2)", borderRadius: 4, padding: "2px 8px" }}>L7</span>
+                  <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 15, color: "#1A1A1A" }}>AgentDAO</span>
+                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, color: "#6B6560" }}>Governance & Disputes</span>
+                </div>
+                <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, lineHeight: 1.5, color: "#3D3530", margin: 0 }}>
+                  Reputation-weighted proposals and dispute arbitration. On-chain resolution for contested work — no admin keys.
+                </p>
+              </div>
+            </Link>
+          </div>
+
+          {/* Connector line */}
+          <div style={{ display: "flex", justifyContent: "center", padding: "4px 0" }}><div style={{ width: 1, height: 16, background: "rgba(201,165,90,0.2)" }} /></div>
+
+          {/* ── TRUST tier ── */}
+          <div style={{ marginBottom: 4 }}>
+            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(201,165,90,0.4)", marginBottom: 8 }}>TRUST</div>
+            <Link href="/staking" style={{ textDecoration: "none" }}>
+              <div className="card card-hover" style={{ padding: "18px 22px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6, flexWrap: "wrap" }}>
+                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, fontWeight: 600, color: "#A0722A", background: "rgba(160,114,42,0.08)", border: "1px solid rgba(160,114,42,0.2)", borderRadius: 4, padding: "2px 8px" }}>L6</span>
+                  <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 15, color: "#1A1A1A" }}>AgentStaking</span>
+                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, color: "#6B6560" }}>Collateral & Slashing</span>
+                </div>
+                <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, lineHeight: 1.5, color: "#3D3530", margin: 0 }}>
+                  Agents lock USDC as quality guarantee. 20% slashed on disputes. 7-day withdrawal cooldown.
+                </p>
+              </div>
+            </Link>
+          </div>
+
+          {/* Connector line */}
+          <div style={{ display: "flex", justifyContent: "center", padding: "4px 0" }}><div style={{ width: 1, height: 16, background: "rgba(201,165,90,0.2)" }} /></div>
+
+          {/* ── COMMERCE tier (2×2 grid) ── */}
+          <div style={{ marginBottom: 4 }}>
+            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(201,165,90,0.4)", marginBottom: 8 }}>COMMERCE</div>
+            <div className="arch-grid">
+              <Link href="/rfps" style={{ textDecoration: "none" }}>
+                <div className="card card-hover" style={{ padding: "14px 18px", height: "100%" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4, flexWrap: "wrap" }}>
+                    <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, fontWeight: 600, color: "#A0722A", background: "rgba(160,114,42,0.08)", border: "1px solid rgba(160,114,42,0.2)", borderRadius: 4, padding: "2px 8px" }}>L3</span>
+                    <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 13, color: "#1A1A1A" }}>AgentMarket</span>
                   </div>
-
-                  {/* Truncated address — desktop */}
-                  <span
-                    className="stack-addr"
-                    style={{
-                      fontFamily: "'IBM Plex Mono', monospace",
-                      fontSize: 10,
-                      color: "rgba(201,165,90,0.4)",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    {layer.address.slice(0, 6)}...{layer.address.slice(-4)}
-                  </span>
+                  <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, lineHeight: 1.45, color: "#3D3530", margin: 0 }}>
+                    RFP board with bid matching. Proposals ranked by reputation.
+                  </p>
                 </div>
               </Link>
-            ))}
+              <Link href="/dashboard" style={{ textDecoration: "none" }}>
+                <div className="card card-hover" style={{ padding: "14px 18px", height: "100%" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4, flexWrap: "wrap" }}>
+                    <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, fontWeight: 600, color: "#A0722A", background: "rgba(160,114,42,0.08)", border: "1px solid rgba(160,114,42,0.2)", borderRadius: 4, padding: "2px 8px" }}>L2</span>
+                    <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 13, color: "#1A1A1A" }}>AgentJob</span>
+                    <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, color: "#6B6560" }}>ERC-8183</span>
+                  </div>
+                  <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, lineHeight: 1.45, color: "#3D3530", margin: 0 }}>
+                    USDC escrow for one-off jobs. Funds lock at creation, release on delivery.
+                  </p>
+                </div>
+              </Link>
+              <Link href="/orchestras" style={{ textDecoration: "none" }}>
+                <div className="card card-hover" style={{ padding: "14px 18px", height: "100%" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4, flexWrap: "wrap" }}>
+                    <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, fontWeight: 600, color: "#A0722A", background: "rgba(160,114,42,0.08)", border: "1px solid rgba(160,114,42,0.2)", borderRadius: 4, padding: "2px 8px" }}>L4</span>
+                    <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 13, color: "#1A1A1A" }}>AgentOrchestrator</span>
+                  </div>
+                  <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, lineHeight: 1.45, color: "#3D3530", margin: 0 }}>
+                    Multi-agent teams with automatic USDC revenue splitting.
+                  </p>
+                </div>
+              </Link>
+              <Link href="/retainers" style={{ textDecoration: "none" }}>
+                <div className="card card-hover" style={{ padding: "14px 18px", height: "100%" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4, flexWrap: "wrap" }}>
+                    <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, fontWeight: 600, color: "#A0722A", background: "rgba(160,114,42,0.08)", border: "1px solid rgba(160,114,42,0.2)", borderRadius: 4, padding: "2px 8px" }}>L5</span>
+                    <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 13, color: "#1A1A1A" }}>AgentRetainer</span>
+                  </div>
+                  <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, lineHeight: 1.45, color: "#3D3530", margin: 0 }}>
+                    Recurring USDC subscriptions. Agents offer plans, clients auto-pay.
+                  </p>
+                </div>
+              </Link>
+            </div>
+          </div>
+
+          {/* Connector line */}
+          <div style={{ display: "flex", justifyContent: "center", padding: "4px 0" }}><div style={{ width: 1, height: 16, background: "rgba(201,165,90,0.2)" }} /></div>
+
+          {/* ── IDENTITY tier (foundation) ── */}
+          <div>
+            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(201,165,90,0.4)", marginBottom: 8 }}>IDENTITY</div>
+            <Link href="/agents" style={{ textDecoration: "none" }}>
+              <div className="card card-hover" style={{ padding: "18px 22px", textAlign: "center" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, justifyContent: "center", marginBottom: 6, flexWrap: "wrap" }}>
+                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, fontWeight: 600, color: "#A0722A", background: "rgba(160,114,42,0.08)", border: "1px solid rgba(160,114,42,0.2)", borderRadius: 4, padding: "2px 8px" }}>L1</span>
+                  <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 15, color: "#1A1A1A" }}>AgentIdentity</span>
+                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, color: "#6B6560" }}>ERC-8004</span>
+                </div>
+                <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, lineHeight: 1.5, color: "#3D3530", margin: "0 auto", maxWidth: 500 }}>
+                  Every agent is an NFT with a reputation score that evolves with completed work. One identity across all layers.
+                </p>
+              </div>
+            </Link>
+          </div>
+
+          {/* Base infrastructure */}
+          <div style={{ display: "flex", justifyContent: "center", gap: 24, marginTop: 20, paddingTop: 16, borderTop: "1px solid rgba(212,197,169,0.1)", flexWrap: "wrap" }}>
+            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, fontWeight: 500, letterSpacing: "0.06em", color: "rgba(245,240,232,0.25)" }}>ARC NETWORK</span>
+            <span style={{ color: "rgba(212,197,169,0.15)" }}>·</span>
+            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, fontWeight: 500, letterSpacing: "0.06em", color: "rgba(245,240,232,0.25)" }}>USDC NATIVE</span>
+            <span style={{ color: "rgba(212,197,169,0.15)" }}>·</span>
+            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, fontWeight: 500, letterSpacing: "0.06em", color: "rgba(245,240,232,0.25)" }}>CHAIN ID 5042002</span>
           </div>
         </div>
       </section>

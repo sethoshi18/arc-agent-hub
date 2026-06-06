@@ -234,7 +234,13 @@ input::placeholder, textarea::placeholder {
   .layer-addr-mobile { display: inline-block !important; margin-top: 8px; }
 }
 
-/* ── Landing page — stack rows (dark section) ────────────────── */
+/* ── Landing page — architecture diagram ──────────────────────── */
+.arch-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+}
+
 .stack-row:hover {
   background: rgba(245, 240, 232, 0.06);
 }
@@ -296,6 +302,11 @@ input::placeholder, textarea::placeholder {
   .hero-section {
     padding-top: 56px !important;
     padding-bottom: 56px !important;
+  }
+
+  /* Landing page — architecture grid on mobile */
+  .arch-grid {
+    grid-template-columns: 1fr !important;
   }
 
   /* Landing page — stack rows on mobile */
