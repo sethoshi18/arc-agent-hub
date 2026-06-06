@@ -290,11 +290,11 @@ input::placeholder, textarea::placeholder {
     overflow-wrap: break-word !important;
   }
 
-  /* Hero subtitle — prevent hyphenation */
+  /* Hero subtitle */
   .hero-subtitle {
     hyphens: none !important;
     word-break: normal !important;
-    text-align: left !important;
+    text-align: center !important;
     overflow-wrap: normal !important;
   }
 
