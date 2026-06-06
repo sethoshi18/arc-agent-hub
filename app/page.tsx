@@ -1,125 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef } from "react";
 
 /* ═══════════════════════════════════════════════════════════════
-   WATER BACKGROUND
-   Slope-based water shader: light reflects off wave surface angles,
-   producing real ripple lines + sparkle (not flat color blobs).
-   Venice-style palette — cool silvery troughs, warm champagne/gold
-   crests. Zoomed out (0.6), slow dramatic drift.
+   VIDEO BACKGROUND — sparkling water loop, muted, no audio.
    ═══════════════════════════════════════════════════════════════ */
 
-const ZOOM = 0.6; // camera ratio — <1 zooms out (smaller, denser ripples)
-const TIME_STEP = 0.008; // livelier horizontal drift
-
-// Venice palette: cool silver-blue shadow → pale neutral → warm cream → gold sparkle
-const W_DARK: [number, number, number] = [168, 177, 186];
-const W_MID: [number, number, number] = [212, 211, 203];
-const W_LIGHT: [number, number, number] = [240, 233, 220];
-const W_SPEC: [number, number, number] = [255, 250, 233];
-
-function waterColor(b: number): [number, number, number] {
-  let a: [number, number, number], c: [number, number, number], t: number;
-  if (b < 0.4) {
-    a = W_DARK; c = W_MID; t = b / 0.4;
-  } else if (b < 0.72) {
-    a = W_MID; c = W_LIGHT; t = (b - 0.4) / 0.32;
-  } else {
-    a = W_LIGHT; c = W_SPEC; t = (b - 0.72) / 0.28;
-  }
-  return [
-    a[0] + (c[0] - a[0]) * t,
-    a[1] + (c[1] - a[1]) * t,
-    a[2] + (c[2] - a[2]) * t,
-  ];
-}
-
-/** Wave slope (analytical cosine derivatives) → light-reflection brightness. */
-function waterSurface(x: number, y: number, time: number): number {
-  const u = (x * 8.0) / ZOOM;
-  const v = (y * 32.0) / ZOOM;
-  let sx = 0, sy = 0, p: number, c: number;
-
-  // v-dominant phases → horizontal ripple lines; tiny u term = gentle natural undulation
-  p = 0.06 * u + 1.0 * v + 0.8 * time; c = Math.cos(p); sx += 0.30 * 0.06 * c; sy += 0.30 * 1.0 * c;
-  p = 0.04 * u + 0.7 * v + 0.5 * time + 1.0; c = Math.cos(p); sx += 0.24 * 0.04 * c; sy += 0.24 * 0.7 * c;
-  p = 0.10 * u + 1.5 * v + 1.0 * time + 2.0; c = Math.cos(p); sx += 0.16 * 0.10 * c; sy += 0.16 * 1.5 * c;
-  p = 0.07 * u + 0.5 * v + 0.4 * time + 3.0; c = Math.cos(p); sx += 0.13 * 0.07 * c; sy += 0.13 * 0.5 * c;
-  p = 0.03 * u + 0.25 * v + 0.2 * time + 4.0; c = Math.cos(p); sx += 0.20 * 0.03 * c; sy += 0.20 * 0.25 * c;
-  p = 0.12 * u + 1.9 * v + 1.3 * time + 5.0; c = Math.cos(p); sx += 0.07 * 0.12 * c; sy += 0.07 * 1.9 * c;
-
-  const nLen = Math.sqrt(sx * sx + sy * sy + 1.0);
-  const dot = (-sx * 0.25 + -sy * 0.5 + 1.0) / (nLen * 1.14);
-  const spec = Math.pow(Math.max(0, dot), 20.0);
-  const val = 0.25 + Math.max(0, dot) * 0.5 + spec * 0.3;
-  return Math.max(0, Math.min(1, val));
-}
+const BG_VIDEO_SRC =
+  "https://pub.hyperagent.com/api/published/pbf01KTEWD0FT_DPN5T13WA55VV7HD/fer1084_pindown.io_1780761241.mp4";
 
 function WaterBackground() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d", { alpha: false });
-    if (!ctx) return;
-
-    const SCALE = 3; // 1/3 resolution — crisp ripple detail without aliasing
-    let offscreen: HTMLCanvasElement;
-    let offCtx: CanvasRenderingContext2D;
-    let imgData: ImageData;
-    let ow = 0, oh = 0;
-    let time = 0;
-    let animId = 0;
-
-    function resize() {
-      const w = window.innerWidth;
-      const h = window.innerHeight;
-      canvas!.width = w;
-      canvas!.height = h;
-      ow = Math.ceil(w / SCALE);
-      oh = Math.ceil(h / SCALE);
-      offscreen = document.createElement("canvas");
-      offscreen.width = ow;
-      offscreen.height = oh;
-      offCtx = offscreen.getContext("2d", { alpha: false })!;
-      imgData = offCtx.createImageData(ow, oh);
-    }
-
-    function render() {
-      const data = imgData.data;
-      for (let y = 0; y < oh; y++) {
-        const ny = y / oh;
-        for (let x = 0; x < ow; x++) {
-          const nx = x / ow;
-          const b = waterSurface(nx, ny, time);
-          const [r, g, bl] = waterColor(b);
-          const i = (y * ow + x) * 4;
-          data[i] = r;
-          data[i + 1] = g;
-          data[i + 2] = bl;
-          data[i + 3] = 255;
-        }
-      }
-      offCtx.putImageData(imgData, 0, 0);
-      ctx!.imageSmoothingEnabled = true;
-      ctx!.imageSmoothingQuality = "high";
-      ctx!.drawImage(offscreen, 0, 0, canvas!.width, canvas!.height);
-      time += TIME_STEP;
-      animId = requestAnimationFrame(render);
-    }
-
-    resize();
-    render();
-    window.addEventListener("resize", resize);
-    return () => {
-      cancelAnimationFrame(animId);
-      window.removeEventListener("resize", resize);
-    };
-  }, []);
-
   return (
     <div
       style={{
@@ -130,21 +20,27 @@ function WaterBackground() {
         height: "100%",
         zIndex: -1,
         pointerEvents: "none",
+        overflow: "hidden",
+        background: "#F5F0E8",
       }}
     >
-      <canvas
-        ref={canvasRef}
-        style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}
-      />
-      {/* Soft cream scrim — keeps dark hero text readable over the shimmer */}
-      <div
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="auto"
         style={{
           position: "absolute",
-          inset: 0,
-          background:
-            "linear-gradient(180deg, rgba(245,240,232,0.18) 0%, rgba(245,240,232,0.38) 100%)",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
         }}
-      />
+      >
+        <source src={BG_VIDEO_SRC} type="video/mp4" />
+      </video>
     </div>
   );
 }
