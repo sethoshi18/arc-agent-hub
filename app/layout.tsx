@@ -15,14 +15,21 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Providers>
           <Nav />
           <main style={{ minHeight: "calc(100vh - 65px)" }}>{children}</main>
-          <footer style={{ borderTop: "1px solid #D4C5A9", padding: "32px 24px", fontSize: 12 }}>
+          <footer style={{
+            borderTop: "1px solid rgba(255,255,255,0.1)",
+            padding: "32px 24px",
+            fontSize: 12,
+            background: "#1A1A1A",
+            position: "relative",
+            zIndex: 1,
+          }}>
             <div style={{
               maxWidth: 1100, margin: "0 auto", display: "flex", flexWrap: "wrap",
               alignItems: "center", justifyContent: "space-between", gap: 12,
             }}>
               <span style={{
                 fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 14,
-                color: "#1A1A1A", letterSpacing: "-0.02em",
+                color: "#FFFFFF", letterSpacing: "-0.02em",
               }}>
                 Arc Agent Hub
               </span>
@@ -38,12 +45,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   ["Faucet", "https://faucet.circle.com"],
                 ].map(([l, h]) => (
                   <a key={h} href={h} target="_blank" rel="noopener noreferrer"
-                    style={{ fontFamily: "'IBM Plex Mono', monospace", color: "#3D3530", textDecoration: "none", fontSize: 11 }}>
+                    style={{ fontFamily: "'IBM Plex Mono', monospace", color: "rgba(255,255,255,0.6)", textDecoration: "none", fontSize: 11 }}>
                     {l}
                   </a>
                 ))}
               </div>
-              <span style={{ fontFamily: "'IBM Plex Mono', monospace", color: "#6B6560" }}>
+              <span style={{ fontFamily: "'IBM Plex Mono', monospace", color: "rgba(255,255,255,0.4)" }}>
                 2026 · MIT · Arc Testnet
               </span>
             </div>
